@@ -1,129 +1,146 @@
 package com.example.presensikita
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfilePage() {
-    var password by remember { mutableStateOf("") }
-
+fun ProfilePage(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.White)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Bar
+        // Header
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = "ABF Solutions",
-                style = MaterialTheme.typography.titleLarge,
-                color = Color(0xFF00A651)
+                fontSize = 20.sp,
+                color = Color(0xFF00A651),
+                fontWeight = FontWeight.Bold
             )
-
-            Row {
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications),
-                        contentDescription = "Notifications",
-                        tint = Color(0xFF00A651)
-                    )
-                }
-
-                IconButton(onClick = { /* Handle profile */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_profile),
-                        contentDescription = "Profile",
-                        tint = Color(0xFF00A651)
-                    )
-                }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.Notifications,
+                    contentDescription = "Notifications",
+                    tint = Color(0xFF00A651),
+                    modifier = Modifier.size(24.dp).padding(end = 8.dp)
+                )
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "Profile",
+                    tint = Color(0xFF00A651),
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
 
-        // Profile Title
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Profile picture and name
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "Profile Picture",
+            tint = Color(0xFF00A651),
+            modifier = Modifier.size(120.dp)
+        )
         Text(
-            text = "Your Profile",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 24.dp)
+            text = "Admin Departemen Sistem Informasi",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            modifier = Modifier.padding(top = 8.dp)
         )
 
-        // Profile Image
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF00A651))
-                .padding(bottom = 32.dp),
-            contentAlignment = Alignment.Center
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Profile details
+        ProfileInfoItem(label = "Email", value = "admin_dsi@unand.ac.id")
+        ProfileInfoItem(label = "Departemen", value = "Sistem Informasi")
+        ProfileInfoItem(label = "Fakultas", value = "Teknologi Informasi")
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Action buttons
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_profile),
-                contentDescription = "Profile Picture",
-                tint = Color.White,
-                modifier = Modifier.size(80.dp)
+            Text(
+                text = "Ubah Password",
+                fontSize = 14.sp,
+                color = Color.Black,
+                modifier = Modifier.clickable { /* Handle Change Password */ }
+            )
+            Text(
+                text = "Edit Profile",
+                fontSize = 14.sp,
+                color = Color.Black,
+                modifier = Modifier.clickable { /* Handle Edit Profile */ }
             )
         }
 
-        // User Name Display
-        Text(
-            text = "John Doe", // Hardcoded for preview
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+        Spacer(modifier = Modifier.height(24.dp))
 
-        // Password Field
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color(0xFF00A651),
-                unfocusedBorderColor = Color.Gray
-            )
-        )
-
-        // Logout Button
+        // Logout button
         Button(
-            onClick = { /* Handle logout */ },
+            onClick = { /* Handle Logout */ },
+//            colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF00A651)),
+            colors = ButtonDefaults.buttonColors(Color(0xFF00AF4F)),
+            shape = CircleShape,
             modifier = Modifier
-                .padding(top = 32.dp)
                 .fillMaxWidth()
-                .height(48.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF00A651)
-            )
+                .height(50.dp)
         ) {
-            Text("Logout", color = Color.White)
+            Text(
+                text = "Logout",
+                fontSize = 16.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun ProfilePagePreview() {
-    MaterialTheme {
-        ProfilePage()
+fun ProfileInfoItem(label: String, value: String) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+    ) {
+        Text(
+            text = label,
+            fontSize = 14.sp,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            color = Color.Black
+        )
     }
 }
