@@ -24,43 +24,39 @@ class SplashScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Menggunakan Jetpack Compose untuk menampilkan SplashScreen
         setContent {
             PresensiKitaTheme {
                 SplashScreen()
             }
         }
 
-        // Menunda selama 3 detik sebelum pindah ke MainActivity
         lifecycleScope.launch {
-            delay(3000) // Delay selama 3 detik
+            delay(3000)
             startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
-            finish() // Tutup SplashScreenActivity
+            finish()
         }
     }
 }
 
 @Composable
 fun SplashScreen() {
-    // ConstraintLayout di Compose untuk meniru tata letak XML
     ConstraintLayout(
         modifier = Modifier.fillMaxSize()
     ) {
-        // Atur constraints seperti di XML
         val (image) = createRefs()
 
         Image(
             painter = painterResource(id = R.drawable.solutions__converted_),
             contentDescription = "Splash Image",
             modifier = Modifier
-                .size(224.dp, 553.dp) // Menggunakan ukuran yang mirip dengan XML
+                .size(185.dp, 553.dp)
                 .constrainAs(image) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-            contentScale = ContentScale.Fit // Sama seperti `scaleType="fitCenter"`
+            contentScale = ContentScale.Fit
         )
     }
 }
