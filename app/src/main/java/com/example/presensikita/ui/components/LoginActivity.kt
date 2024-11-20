@@ -14,9 +14,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.shape.RoundedCornerShape
 
 class LoginActivity : ComponentActivity() {
@@ -37,13 +34,12 @@ fun LoginScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 0.dp, top = 32.dp, end = 0.dp, bottom = 46.dp) // Padding khusus untuk kanan, kiri, atas, bawah
+            .padding(start = 0.dp, top = 32.dp, end = 0.dp, bottom = 46.dp)
     ) {
-        // Kolom untuk Text dan TextField
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center), // Posisikan elemen lain di tengah layar
+                .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -55,7 +51,6 @@ fun LoginScreen() {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // TextField untuk Email
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -68,10 +63,10 @@ fun LoginScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 52.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp), // Membuat border lebih rounded
+                shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black, // Warna border ketika focused
-                    unfocusedBorderColor = Color.Black // Warna border ketika tidak focused
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
                 )
             )
 
@@ -88,21 +83,20 @@ fun LoginScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 52.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp), // Membuat border lebih rounded
+                shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black, // Warna border ketika focused
-                    unfocusedBorderColor = Color.Black // Warna border ketika tidak focused
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
                 )
             )
         }
 
-        // Button yang diposisikan di bawah layar
         Button(
             onClick = { /* Handle login */ },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp, vertical = 16.dp)
-                .align(Alignment.BottomCenter), // Posisikan Button di bagian bawah layar
+                .align(Alignment.BottomCenter),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
         ) {
             Text(text = "Continue", color = Color.White)
