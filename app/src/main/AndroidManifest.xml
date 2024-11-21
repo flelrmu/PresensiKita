@@ -13,6 +13,9 @@
         android:theme="@style/Theme.PresensiKita"
         tools:targetApi="31">
         <activity
+            android:name=".DownloadReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.components.EditClassActivity"
             android:exported="false" />
         <activity
