@@ -18,19 +18,19 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.presensikita.R
 
-class EditClassActivity : ComponentActivity() { // Mengubah AddClassActivity menjadi EditClassActivity
+class EditClassActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            EditClassScreen() // Mengubah pemanggilan AddClassScreen menjadi EditClassScreen
+            EditClassScreen()
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
-    var inputText by remember { mutableStateOf("") } // State untuk input teks
+fun EditClassScreen() {
+    var inputText by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -41,7 +41,6 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Top Bar Icons
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -49,14 +48,12 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Ikon Solutions tetap di tempatnya
                 Image(
                     painter = painterResource(id = R.drawable.solutions),
                     contentDescription = "Solutions Icon",
                     modifier = Modifier.size(144.dp, 30.dp)
                 )
 
-                // Row untuk Notification dan Profile agar lebih fleksibel
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -65,7 +62,7 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
                         contentDescription = "Notification Icon",
                         modifier = Modifier
                             .size(43.dp, 31.dp)
-                            .padding(end = 8.dp) // Mengatur jarak antar ikon
+                            .padding(end = 8.dp)
                     )
                     Image(
                         painter = painterResource(id = R.drawable.profile),
@@ -77,7 +74,6 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
 
             Spacer(modifier = Modifier.height(100.dp))
 
-            // Chevron Icon
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
@@ -89,9 +85,8 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // Title
             Text(
-                text = "Edit Kelas", // Mengubah "Tambah Kelas" menjadi "Edit Kelas"
+                text = "Edit Kelas",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2A2A2A)
@@ -99,7 +94,6 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            // OutlinedTextField untuk input biasa
             OutlinedTextField(
                 value = inputText,
                 onValueChange = { inputText = it },
@@ -147,7 +141,6 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Button
             Button(
                 onClick = { /* Handle edit kelas */ },
                 modifier = Modifier
@@ -155,7 +148,7 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
-                Text(text = "Simpan", color = Color.White) // Mengubah teks tombol menjadi "Simpan"
+                Text(text = "Simpan", color = Color.White)
             }
         }
     }
@@ -163,6 +156,6 @@ fun EditClassScreen() { // Mengubah AddClassScreen menjadi EditClassScreen
 
 @Preview(showBackground = true)
 @Composable
-fun EditClassScreenPreview() { // Mengubah AddClassScreenPreview menjadi EditClassScreenPreview
+fun EditClassScreenPreview() {
     EditClassScreen()
 }

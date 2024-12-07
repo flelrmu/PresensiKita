@@ -4,22 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.presensikita.R
 
 class ClassListActivity : ComponentActivity() {
@@ -33,6 +36,9 @@ class ClassListActivity : ComponentActivity() {
 
 @Composable
 fun ClassListScreen() {
+    var showDialog by remember { mutableStateOf(false) }
+    var selectedClass by remember { mutableStateOf("") }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -93,7 +99,6 @@ fun ClassListScreen() {
 
             Spacer(modifier = Modifier.height(70.dp))
 
-            // Add Class Section
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -155,7 +160,12 @@ fun ClassListScreen() {
                         Image(
                             painter = painterResource(R.drawable.trash),
                             contentDescription = "Trash Icon",
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable {
+                                    selectedClass = className
+                                    showDialog = true
+                                }
                         )
                     }
                 }
@@ -163,15 +173,56 @@ fun ClassListScreen() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Attendance Report Button
-            androidx.compose.material3.Button(
-                onClick = { /* Handle login */ },
+            if (showDialog) {
+                Dialog(onDismissRequest = { showDialog = false }) {
+                    Box(
+                        modifier = Modifier
+                            .size(300.dp)
+                            .padding(16.dp)
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Yakin untuk\nmenghapus Kelas?",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Button(
+                                    onClick = {
+                                        showDialog = false
+                                    },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
+                                ) {
+                                    Text(text = "Continue", color = Color.White)
+                                }
+                                Button(
+                                    onClick = { showDialog = false },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+                                ) {
+                                    Text(text = "Cancel", color = Color.White)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Button(
+                onClick = { /* Handle Laporan Kehadiran */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
-                androidx.compose.material3.Text(text = "Laporan Kehadiran", color = Color.White)
+                Text(text = "Laporan Kehadiran", color = Color.White)
             }
         }
     }

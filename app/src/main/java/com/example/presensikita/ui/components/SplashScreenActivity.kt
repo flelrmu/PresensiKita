@@ -15,9 +15,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
-import com.example.presensikita.MainActivity
 import com.example.presensikita.R
 import com.example.presensikita.ui.theme.PresensiKitaTheme
+import com.example.presensikita.ui.components.LoginActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -33,7 +33,7 @@ class SplashScreenActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             delay(3000)
-            startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
+            startActivity(Intent(this@SplashScreenActivity, LoginActivity::class.java))
             finish()
         }
     }
@@ -50,7 +50,7 @@ fun SplashScreen() {
             painter = painterResource(id = R.drawable.solutions__converted_),
             contentDescription = "Splash Image",
             modifier = Modifier
-                .size(180.dp, 553.dp)
+                .size(150.dp, 553.dp)
                 .constrainAs(image) {
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)

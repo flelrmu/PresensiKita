@@ -93,7 +93,6 @@ fun DownloadReportScreen() {
             Spacer(modifier = Modifier.height(70.dp))
 
 
-            // Tabel
             val sampleData = listOf(
                 Triple("Kalkulus", "JSI345", "6"),
                 Triple("Akuisisi Data", "JSI876", "7"),
@@ -101,7 +100,6 @@ fun DownloadReportScreen() {
                 Triple("Sistem Operasi", "JSI567", "9")
             )
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                // Header Kolom
                 item {
                     Row(
                         modifier = Modifier
@@ -115,7 +113,6 @@ fun DownloadReportScreen() {
                     }
                 }
 
-                // Isi Tabel
                 items(sampleData) { data ->
                     Row(
                         modifier = Modifier
@@ -133,7 +130,6 @@ fun DownloadReportScreen() {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Attendance Report Button
             androidx.compose.material3.Button(
                 onClick = { /* Handle login */ },
                 modifier = Modifier
