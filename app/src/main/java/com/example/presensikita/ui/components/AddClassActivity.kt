@@ -72,7 +72,7 @@ fun AddClassScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
@@ -83,7 +83,7 @@ fun AddClassScreen() {
                     .size(33.dp, 31.dp)
             )
 
-            Spacer(modifier = Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = "Tambah Kelas",

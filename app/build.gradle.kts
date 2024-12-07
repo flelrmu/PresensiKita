@@ -96,4 +96,18 @@ dependencies {
 
     // UI Testing for Compose
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // gson converter
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("com.squareup.okhttp3:okhttp:4.11.0") // Versi terbaru
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0") // Logging
+
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
 }
