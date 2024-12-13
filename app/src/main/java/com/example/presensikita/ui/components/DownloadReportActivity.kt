@@ -5,9 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,20 +19,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.presensikita.R
 
-class EditClassActivity : ComponentActivity() {
+class DownloadReportActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            EditClassScreen()
+            DownloadReportScreen()
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditClassScreen() {
-    var inputText by remember { mutableStateOf("") }
-
+fun DownloadReportScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -85,70 +83,61 @@ fun EditClassScreen() {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            Text(
-                text = "Edit Kelas",
+            androidx.compose.material3.Text(
+                text = "Laporan Pertemuan",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2A2A2A)
             )
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(70.dp))
 
-            OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                label = { Text(text = "Nama Kelas") },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 52.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
-                )
-            )
 
-            OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                label = { Text(text = "Kode Kelas") },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 52.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
-                )
+            val sampleData = listOf(
+                Triple("Kalkulus", "JSI345", "6"),
+                Triple("Akuisisi Data", "JSI876", "7"),
+                Triple("Algoritma", "JSI234", "8"),
+                Triple("Sistem Operasi", "JSI567", "9")
             )
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("Kelas", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                        Text("Kode", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                        Text("Jumlah Pertemuan", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    }
+                }
 
-            OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
-                label = { Text(text = "Dosen Pengampu") },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 52.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
-                )
-            )
+                items(sampleData) { data ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(data.first, modifier = Modifier.weight(1f))
+                        Text(data.second, modifier = Modifier.weight(1f))
+                        Text(data.third, modifier = Modifier.weight(1f))
+                    }
+                }
+            }
+
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Button(
-                onClick = { /* Handle edit kelas */ },
+            androidx.compose.material3.Button(
+                onClick = { /* Handle login */ },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
-                Text(text = "Simpan", color = Color.White)
+                androidx.compose.material3.Text(text = "Donwload Laporan Pertemuan", color = Color.White)
             }
         }
     }
@@ -156,6 +145,6 @@ fun EditClassScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun EditClassScreenPreview() {
-    EditClassScreen()
+fun PreviewDownloadReportScreen() {
+    DownloadReportScreen()
 }
