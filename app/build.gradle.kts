@@ -38,6 +38,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true // Jika Anda juga menggunakan XML di beberapa bagian.
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -50,21 +51,34 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
+    // Jetpack Compose BOM untuk memastikan versi kompatibel
+    implementation(platform("androidx.compose:compose-bom:2024.01.00"))
 
-    // Tambahkan untuk Jetpack Compose UI
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    // Jetpack Compose Core Dependencies
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material:material")
+    implementation("androidx.compose.ui:ui-tooling-preview")
 
-    // Tambahkan ConstraintLayout Compose
-    implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    // Jetpack Compose ConstraintLayout
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha10")
 
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.appcompat)
+    // Material Design 3 Components
+    implementation("androidx.compose.material3:material3:1.1.1")
+
+    // ConstraintLayout untuk XML
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4") // Untuk mendukung ConstraintLayout di XML.
+
+    // AppCompat untuk mendukung srcCompat
+    implementation("androidx.appcompat:appcompat:1.6.1")
+
+    // Activity Compose
+    implementation("androidx.activity:activity-compose:1.8.0")
+
+    // Lifecycle runtime for Compose
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+
+    // Core AndroidX Libraries
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation(libs.material)
 
     // Tambahkan library lain yang relevan
@@ -80,6 +94,16 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
     // Debugging tools
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Unit Testing Dependencies
+    testImplementation("junit:junit:4.13.2")
+
+    // Android Instrumentation Testing
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // UI Testing for Compose
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 }

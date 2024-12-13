@@ -8,3 +8,11 @@ data class UserProfile(
     val departemen: String = "",
     val fakultas: String = ""
 )
+
+// Data jadwal kuliah
+data class JadwalKuliah(
+    val kelas: String,
+    val hari: String,
+    val jam: String,
+    val ruang: String
+)

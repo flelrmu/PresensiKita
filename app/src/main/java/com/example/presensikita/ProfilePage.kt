@@ -50,16 +50,20 @@ fun ProfileScreen(
             Row {
                 IconButton(onClick = { /* Handle notification */ }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications),
+                        painter = painterResource(id = R.drawable.notification),
                         contentDescription = "Notifications",
-                        tint = Color(0xFF00AF4F)
+                        tint = Color(0xFF00AF4F),
+                        modifier = Modifier
+                            .size(28.dp)
                     )
                 }
                 IconButton(onClick = { /* Handle profile */ }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_profile),
+                        painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile",
-                        tint = Color(0xFF00AF4F)
+                        tint = Color(0xFF00AF4F),
+                        modifier = Modifier
+                            .size(28.dp)
                     )
                 }
             }

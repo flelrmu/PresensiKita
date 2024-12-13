@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.presensikita.data.UserProfile
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     onSaveClick: (UserProfile) -> Unit,
@@ -61,14 +62,14 @@ fun EditProfileScreen(
             Row {
                 IconButton(onClick = { /* Handle notification */ }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_notifications),
+                        painter = painterResource(id = R.drawable.notification),
                         contentDescription = "Notifications",
                         tint = Color(0xFF00AF4F)
                     )
                 }
                 IconButton(onClick = { /* Handle profile */ }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_profile),
+                        painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile",
                         tint = Color(0xFF00AF4F)
                     )
@@ -84,7 +85,7 @@ fun EditProfileScreen(
 
         // Profile Image
         Image(
-            painter = painterResource(id = R.drawable.ic_profile_placeholder),
+            painter = painterResource(id = R.drawable.profile),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(120.dp)
@@ -104,7 +105,11 @@ fun EditProfileScreen(
                 onValueChange = { profile = profile.copy(nama = it) },
                 label = { Text("Nama") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                )
             )
 
             OutlinedTextField(
@@ -117,6 +122,10 @@ fun EditProfileScreen(
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                ),
                 isError = !isEmailValid // Tandai sebagai error jika tidak valid
             )
 
@@ -134,7 +143,11 @@ fun EditProfileScreen(
                 onValueChange = { profile = profile.copy(departemen = it) },
                 label = { Text("Departemen") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                )
             )
 
             OutlinedTextField(
@@ -142,7 +155,11 @@ fun EditProfileScreen(
                 onValueChange = { profile = profile.copy(fakultas = it) },
                 label = { Text("Fakultas") },
                 modifier = Modifier.fillMaxWidth(),
-                singleLine = true
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                )
             )
         }
 
