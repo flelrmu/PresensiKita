@@ -1,9 +1,11 @@
 package com.example.presensikita.ui.components
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -11,26 +13,55 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.presensikita.R
+import com.example.presensikita.data.model.Class
+import com.example.presensikita.ui.viewModel.AddClassViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 class AddClassActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AddClassScreen()
+            val addClassViewModel: AddClassViewModel = viewModel()
+            AddClassScreen(addClassViewModel) { isSuccess ->
+                if (isSuccess) {
+                    val intent = Intent(this, ClassListActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddClassScreen() {
-    var inputText by remember { mutableStateOf("") }
+fun AddClassScreen(
+    addClassViewModel: AddClassViewModel = viewModel(),
+    onResult: (Boolean) -> Unit = {}
+) {
+    val context = LocalContext.current
+    var className by remember { mutableStateOf("") }
+    var classCode by remember { mutableStateOf("") }
+    var lecturer by remember { mutableStateOf("") }
+    var showSnackbar by remember { mutableStateOf(false) }
+
+    val isSuccess by addClassViewModel.isSuccess.collectAsState()
+    val errorMessage by addClassViewModel.errorMessage.collectAsState()
+
+
+    LaunchedEffect(isSuccess) {
+        if (isSuccess) {
+            showSnackbar = true
+            onResult(true)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -45,7 +76,7 @@ fun AddClassScreen() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
@@ -72,15 +103,20 @@ fun AddClassScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(start = 10.dp)
+                    .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
+                    .clickable {
+                        val intent = Intent(context, ClassListActivity::class.java)
+                        context.startActivity(intent)
+                        (context as? ComponentActivity)?.finish()
+                    }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -95,8 +131,8 @@ fun AddClassScreen() {
             Spacer(modifier = Modifier.height(30.dp))
 
             OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
+                value = className,
+                onValueChange = { className = it },
                 label = { Text(text = "Nama Kelas") },
                 singleLine = true,
                 modifier = Modifier
@@ -110,8 +146,8 @@ fun AddClassScreen() {
             )
 
             OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
+                value = classCode,
+                onValueChange = { classCode = it },
                 label = { Text(text = "Kode Kelas") },
                 singleLine = true,
                 modifier = Modifier
@@ -125,8 +161,8 @@ fun AddClassScreen() {
             )
 
             OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it },
+                value = lecturer,
+                onValueChange = { lecturer = it },
                 label = { Text(text = "Dosen Pengampu") },
                 singleLine = true,
                 modifier = Modifier
@@ -142,13 +178,43 @@ fun AddClassScreen() {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { /* Handle tambah kelas */ },
+                onClick = {
+                    val newClass = Class(
+                        class_name = className,
+                        class_code = classCode,
+                        lecturer = lecturer
+                    )
+                    addClassViewModel.addClass(newClass)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
                 Text(text = "Tambah", color = Color.White)
+            }
+
+            errorMessage?.let {
+                Text(
+                    text = it,
+                    color = Color.Red,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+
+        if (showSnackbar) {
+            Snackbar(
+                action = {
+                    Text(
+                        text = "Tutup",
+                        color = Color.White,
+                        modifier = Modifier.clickable { showSnackbar = false }
+                    )
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
+                Text(text = "Kelas berhasil ditambahkan!", color = Color.White)
             }
         }
     }
@@ -159,4 +225,3 @@ fun AddClassScreen() {
 fun AddClassScreenPreview() {
     AddClassScreen()
 }
-

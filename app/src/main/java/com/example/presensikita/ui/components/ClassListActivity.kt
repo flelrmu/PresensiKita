@@ -1,20 +1,26 @@
 package com.example.presensikita.ui.components
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -23,7 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.ui.viewModel.ClassViewModel
 
 class ClassListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,9 +43,19 @@ class ClassListActivity : ComponentActivity() {
 }
 
 @Composable
-fun ClassListScreen() {
+fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
+    val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var selectedClass by remember { mutableStateOf("") }
+    var showSnackbar by remember { mutableStateOf(false) }
+    var snackbarMessage by remember { mutableStateOf("") }
+
+    val classes by viewModel.classes.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchClasses()
+    }
 
     Box(
         modifier = Modifier
@@ -53,7 +71,7 @@ fun ClassListScreen() {
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
@@ -77,14 +95,14 @@ fun ClassListScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(start = 10.dp)
+                    .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
             )
 
@@ -97,7 +115,7 @@ fun ClassListScreen() {
                 color = Color(0xFF2A2A2A)
             )
 
-            Spacer(modifier = Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             Row(
                 modifier = Modifier
@@ -112,61 +130,66 @@ fun ClassListScreen() {
                     fontFamily = FontFamily.Serif,
                     color = Color(0xFF2A2A2A)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Image(
                     painter = painterResource(R.drawable.add),
                     contentDescription = "Add Class",
-                    modifier = Modifier.size(29.dp, 28.dp)
+                    modifier = Modifier
+                        .size(29.dp, 28.dp)
+                        .clickable {
+                            context.startActivity(Intent(context, AddClassActivity::class.java))
+                        }
                 )
             }
 
             Spacer(modifier = Modifier.height(30.dp))
 
             // LazyColumn for Class List
-            val sampleData = listOf(
-                "Kalkulus/A",
-                "Algoritma dan Pemrograman/B",
-                "Basis Data/C",
-                "Jaringan Komputer/D",
-                "Sistem Operasi/E"
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                items(sampleData) { className ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = className,
-                            fontSize = 20.sp,
-                            fontFamily = FontFamily.Serif,
-                            color = Color(0xFF2A2A2A),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Image(
-                            painter = painterResource(R.drawable.edit),
-                            contentDescription = "Edit Icon",
-                            modifier = Modifier.size(23.dp, 20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Image(
-                            painter = painterResource(R.drawable.trash),
-                            contentDescription = "Trash Icon",
+            if (error != null) {
+                Text(
+                    text = "Error: $error",
+                    color = Color.Red,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    items(classes) { classItem ->
+                        Row(
                             modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    selectedClass = className
-                                    showDialog = true
-                                }
-                        )
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${classItem.class_name}/${classItem.class_code}",
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.Serif,
+                                color = Color(0xFF2A2A2A),
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Image(
+                                painter = painterResource(R.drawable.edit),
+                                contentDescription = "Edit Icon",
+                                modifier = Modifier.size(23.dp, 20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(25.dp))
+                            Image(
+                                painter = painterResource(R.drawable.trash),
+                                contentDescription = "Trash Icon",
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .clickable {
+                                        selectedClass = "${classItem.class_name}/${classItem.class_code}"
+                                        showDialog = true
+                                    }
+                            )
+                        }
                     }
                 }
             }
@@ -177,7 +200,10 @@ fun ClassListScreen() {
                 Dialog(onDismissRequest = { showDialog = false }) {
                     Box(
                         modifier = Modifier
-                            .size(300.dp)
+                            .width(300.dp)
+                            .height(200.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color.White)
                             .padding(16.dp)
                     ) {
                         Column(
@@ -198,8 +224,16 @@ fun ClassListScreen() {
                                 Button(
                                     onClick = {
                                         showDialog = false
+                                        val classId = classes.firstOrNull {
+                                            "${it.class_name}/${it.class_code}" == selectedClass
+                                        }?.id
+                                        if (classId != null) {
+                                            viewModel.deleteClass(classId)
+                                            snackbarMessage = "Kelas berhasil dihapus!"
+                                            showSnackbar = true
+                                        }
                                     },
-                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Green)
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
                                 ) {
                                     Text(text = "Continue", color = Color.White)
                                 }
@@ -215,6 +249,8 @@ fun ClassListScreen() {
                 }
             }
 
+            Spacer(modifier = Modifier.weight(1f))
+
             Button(
                 onClick = { /* Handle Laporan Kehadiran */ },
                 modifier = Modifier
@@ -223,6 +259,22 @@ fun ClassListScreen() {
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
                 Text(text = "Laporan Kehadiran", color = Color.White)
+            }
+        }
+
+        // Snackbar untuk notifikasi
+        if (showSnackbar) {
+            Snackbar(
+                action = {
+                    Text(
+                        text = "Tutup",
+                        color = Color.White,
+                        modifier = Modifier.clickable { showSnackbar = false }
+                    )
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            ) {
+                Text(text = snackbarMessage, color = Color.White)
             }
         }
     }
