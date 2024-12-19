@@ -27,6 +27,7 @@ class ChangePasswordActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangePasswordScreen() {
+    var oldPassword by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
@@ -39,7 +40,7 @@ fun ChangePasswordScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.Center) // Menjaga semua konten di tengah halaman
+                .align(Alignment.Center)
         ) {
             // Judul halaman di tengah
             Text(
@@ -50,6 +51,31 @@ fun ChangePasswordScreen() {
             )
 
             Spacer(modifier = Modifier.height(40.dp))
+
+            // Input Password Lama
+            Column(modifier = Modifier.padding(horizontal = 52.dp)) {
+                Text(
+                    text = "Password Lama",
+                    fontSize = 17.sp,
+                    color = Color.Black,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+                OutlinedTextField(
+                    value = oldPassword,
+                    onValueChange = { oldPassword = it },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Input Password Baru
             Column(modifier = Modifier.padding(horizontal = 52.dp)) {
@@ -103,7 +129,7 @@ fun ChangePasswordScreen() {
             Button(
                 onClick = { /* Handle save password */ },
                 modifier = Modifier
-                    .width(120.dp) // Mengatur lebar tombol lebih kecil
+                    .width(120.dp)
                     .padding(vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844)),
                 shape = RoundedCornerShape(16.dp)
