@@ -32,7 +32,7 @@ class EditLecturerActivity : ComponentActivity() {
 fun EditLecturerScreen() {
     var nama by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var nidn by remember { mutableStateOf("") }
+    var nip by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -135,12 +135,12 @@ fun EditLecturerScreen() {
                 )
             }
 
-            // Input NIDN
+            // Input NIP
             Column(modifier = Modifier.padding(horizontal = 52.dp)) {
-                Text(text = "NIDN", fontSize = 17.sp, color = Color.Black)
+                Text(text = "NIP", fontSize = 17.sp, color = Color.Black)
                 OutlinedTextField(
-                    value = nidn,
-                    onValueChange = { nidn = it },
+                    value = nip,
+                    onValueChange = { nip = it },
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
