@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.ui.header
 import com.example.presensikita.ui.viewModel.ClassViewModel
 
 class ClassListActivity : ComponentActivity() {
@@ -66,34 +67,36 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Header
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 0.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.solutions),
-                    contentDescription = "Solutions Icon",
-                    modifier = Modifier.size(144.dp, 30.dp)
-                )
+//            // Header
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 0.dp),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                Image(
+//                    painter = painterResource(id = R.drawable.solutions),
+//                    contentDescription = "Solutions Icon",
+//                    modifier = Modifier.size(144.dp, 30.dp)
+//                )
+//
+//                Row(verticalAlignment = Alignment.CenterVertically) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.notification),
+//                        contentDescription = "Notification Icon",
+//                        modifier = Modifier.size(43.dp, 31.dp)
+//                    )
+//                    Spacer(modifier = Modifier.width(8.dp))
+//                    Image(
+//                        painter = painterResource(id = R.drawable.profile),
+//                        contentDescription = "Profile Icon",
+//                        modifier = Modifier.size(43.dp, 31.dp)
+//                    )
+//                }
+//            }
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Image(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notification Icon",
-                        modifier = Modifier.size(43.dp, 31.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier.size(43.dp, 31.dp)
-                    )
-                }
-            }
+            header()
 
             Spacer(modifier = Modifier.height(50.dp))
 

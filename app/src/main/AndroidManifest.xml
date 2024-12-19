@@ -16,7 +16,7 @@
         android:theme="@style/Theme.PresensiKita"
         tools:targetApi="31">
         <activity
-            android:name=".ui.components.LoginActivity"
+            android:name="com.example.presensikita.ui.components.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.PresensiKita"/>
         <activity
