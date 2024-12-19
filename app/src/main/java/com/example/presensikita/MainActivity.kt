@@ -28,10 +28,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             PresensiKitaTheme {
                 Scaffold {
-                    ScheduleTableScreen(
-                        schedules = dummySchedules(),
-                        onBack = { finish() } // Aksi untuk tombol kembali
-                    )
+//                    ScheduleTableScreen(
+//                        schedules = dummySchedules(),
+//                        onBack = { finish() } // Aksi untuk tombol kembali
+//                    )
                 }
 
             }
@@ -55,10 +55,10 @@ fun dummySchedules(): List<JadwalKuliah> {
 fun Preview() {
     PresensiKitaTheme {
 
-        ScheduleTableScreen(
-            schedules = dummySchedules(),
-            onBack = { finish() } // Aksi untuk tombol kembali
-        )
+//        ScheduleTableScreen(
+//            schedules = dummySchedules(),
+//            onBack = { finish() } // Aksi untuk tombol kembali
+//        )
     }
 }
 

@@ -205,22 +205,22 @@ fun EditJadwalScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    PresensiKitaTheme {
-        EditJadwalScreen(
-            initialJadwal = JadwalKuliah("", "", "", ""),
-            onSaveClick = { simpan() },
-            onBack = { finish() }
-        )
-    }
-}
-
-fun simpan() {
-    TODO("Not yet implemented")
-}
-
-fun finish() {
-    TODO("Not yet implemented")
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    PresensiKitaTheme {
+//        EditJadwalScreen(
+//            initialJadwal = JadwalKuliah("", "", "", ""),
+//            onSaveClick = { simpan() },
+//            onBack = { finish() }
+//        )
+//    }
+//}
+//
+//fun simpan() {
+//    TODO("Not yet implemented")
+//}
+//
+//fun finish() {
+//    TODO("Not yet implemented")
+//}

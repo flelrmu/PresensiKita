@@ -24,10 +24,10 @@ fun NavGraph(navController: NavHostController) {
             ScheduleTableScreen(
                 schedules = dummySchedules(),
                 onBack = { navController.navigate("home_screen") },
-                onProfileClick = { navController.navigate("profile_screen") },
-                onAddJadwal = { navController.navigate("") },
-                onEditJadwal = {navController.navigate("")},
-                kembali = {navController.popBackStack()}
+//                onProfileClick = { navController.navigate("profile_screen") },
+//                onAddJadwal = { navController.navigate("") },
+//                onEditJadwal = {navController.navigate("")},
+//                kembali = {navController.popBackStack()}
             )
         }
 

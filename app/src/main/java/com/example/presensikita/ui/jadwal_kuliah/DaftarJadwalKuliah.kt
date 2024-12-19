@@ -30,10 +30,10 @@ import com.example.presensikita.ui.theme.PresensiKitaTheme
 fun ScheduleTableScreen(
     schedules: List<JadwalKuliah>,
     onBack: () -> Unit,
-    onProfileClick: () -> Unit,
-    onAddJadwal: () -> Unit,
-    onEditJadwal: () -> Unit,
-    kembali: () -> Unit
+//    onProfileClick: () -> Unit,
+//    onAddJadwal: () -> Unit,
+//    onEditJadwal: () -> Unit,
+//    kembali: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -71,7 +71,7 @@ fun ScheduleTableScreen(
                             .size(28.dp)
                     )
                 }
-                IconButton(onClick = { onProfileClick() }) {
+                IconButton(onClick = { /* Handle notification */ }) {
                     Icon(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "Profile",
@@ -106,8 +106,8 @@ fun ScheduleTableScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 32.dp)
-                .clickable { onAddJadwal() },
+                .padding(bottom = 32.dp),
+//                .clickable { onAddJadwal() },
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.End
         ) {
@@ -130,16 +130,16 @@ fun ScheduleTableScreen(
                 JadwalKuliah("Kalkulus", "Kamis", "13.30 - 15.00", "Ruang A"),
                 JadwalKuliah("Akuisisi Data", "Rabu", "9.20 - 11.00", "Ruang B"),
                 JadwalKuliah("Sistem Basis Data", "Senin", "10.00 - 12.00", "Ruang C")
-            ),
-            onEditJadwal
+            )
+//            onEditJadwal
         )
     }
 }
 
 @Composable
 fun ScheduleTable(
-    schedules: List<JadwalKuliah>,
-    onEditJadwal: () -> Unit
+    schedules: List<JadwalKuliah>
+//    onEditJadwal: () -> Unit
 ) {
     Column {
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -162,7 +162,7 @@ fun ScheduleTable(
                 TableCell(schedule.jam)
                 TableCell(schedule.ruang)
                 Spacer(modifier = Modifier.width(12.dp))
-                IconButton(onClick = { onEditJadwal() }) {
+                IconButton(onClick = { /* onEditJadwal() */ }) {
                     Icon(
                         imageVector = Icons.Default.Edit,
                         contentDescription = "Edit",
@@ -213,17 +213,17 @@ fun TableCell(text: String, widthFraction: Float = 0.25f) {
     )
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun Preview() {
-//    PresensiKitaTheme {
-//        ScheduleTableScreen(
-//            schedules = dummySchedules(),
-//            onBack = { finish() } // Aksi untuk tombol kembali
-//        )
-//    }
-//}
-//
-//fun finish() {
-//    TODO("Not yet implemented")
-//}
+@Preview(showBackground = true)
+@Composable
+fun Preview() {
+    PresensiKitaTheme {
+        ScheduleTableScreen(
+            schedules = dummySchedules(),
+            onBack = { finish() } // Aksi untuk tombol kembali
+        )
+    }
+}
+
+fun finish() {
+    TODO("Not yet implemented")
+}
