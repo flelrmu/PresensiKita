@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presensikita.data.UserProfile
+import com.example.presensikita.ui.header
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,46 +38,22 @@ fun EditProfileScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Logo section
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "ABF ",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF00AF4F)
-                )
-                Text(
-                    text = "Solutions",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
+        header()
 
-            // Icons
-            Row {
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notifications",
-                        tint = Color(0xFF00AF4F)
-                    )
-                }
-                IconButton(onClick = { /* Handle profile */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile",
-                        tint = Color(0xFF00AF4F)
-                    )
-                }
-            }
-        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.leftchevron),
+            contentDescription = "Chevron Icon",
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(start = 0.dp)
+                .size(33.dp, 31.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
 
         Text(
             text = "Edit Profile",
@@ -150,17 +128,17 @@ fun EditProfileScreen(
                 )
             )
 
-            OutlinedTextField(
-                value = profile.fakultas,
-                onValueChange = { profile = profile.copy(fakultas = it) },
-                label = { Text("Fakultas") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
-                )
-            )
+//            OutlinedTextField(
+//                value = profile.fakultas,
+//                onValueChange = { profile = profile.copy(fakultas = it) },
+//                label = { Text("Fakultas") },
+//                modifier = Modifier.fillMaxWidth(),
+//                singleLine = true,
+//                colors = TextFieldDefaults.outlinedTextFieldColors(
+//                    focusedBorderColor = Color.Black,
+//                    unfocusedBorderColor = Color.Black
+//                )
+//            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -188,3 +166,15 @@ fun EditProfileScreen(
         }
     }
 }
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewEditProfileScreen() {
+    EditProfileScreen(
+        onSaveClick = {},
+        initialProfile = UserProfile(),
+        onBackClick = { finish() }
+    )
+}
+

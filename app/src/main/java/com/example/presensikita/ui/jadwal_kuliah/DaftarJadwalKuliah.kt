@@ -1,9 +1,12 @@
 package com.example.presensikita.ui.jadwal_kuliah
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -24,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
 import com.example.presensikita.data.JadwalKuliah
 import com.example.presensikita.dummySchedules
+import com.example.presensikita.ui.components.AddClassActivity
+import com.example.presensikita.ui.header
 import com.example.presensikita.ui.theme.PresensiKitaTheme
 
 @Composable
@@ -35,64 +40,33 @@ fun ScheduleTableScreen(
 //    onEditJadwal: () -> Unit,
 //    kembali: () -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "ABF ",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF00AF4F)
-                )
-                Text(
-                    text = "Solutions",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-            Row {
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notifications",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-            }
-        }
+
+        header()
 
         // Chevron Icon
+
+        Spacer(modifier = Modifier.height(50.dp))
+
         Image(
             painter = painterResource(id = R.drawable.leftchevron),
-            contentDescription = "Kembali",
+            contentDescription = "Chevron Icon",
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(start = 10.dp, top = 40.dp, bottom = 24.dp)
-                .size(24.dp, 24.dp)
-                .clickable { onBack() }
+                .padding(start = 0.dp)
+                .size(33.dp, 31.dp)
         )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
 
         // Judul Tabel
         Text(
@@ -121,7 +95,11 @@ fun ScheduleTableScreen(
             Image(
                 painter = painterResource(R.drawable.add),
                 contentDescription = "Add Class",
-                modifier = Modifier.size(29.dp, 28.dp)
+                modifier = Modifier
+                    .size(29.dp, 28.dp)
+                    .clickable {
+//                        context.startActivity(Intent(context, AddClassActivity::class.java))
+                    }
             )
         }
 
@@ -161,25 +139,23 @@ fun ScheduleTable(
                 TableCell(schedule.hari)
                 TableCell(schedule.jam)
                 TableCell(schedule.ruang)
-                Spacer(modifier = Modifier.width(12.dp))
-                IconButton(onClick = { /* onEditJadwal() */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(18.dp)
-                    )
-                }
-                IconButton(onClick = { /* TODO: Delete */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = Color.Red,
-                        modifier = Modifier
-                            .size(18.dp)
-                    )
-                }
+                Spacer(modifier = Modifier.weight(1f))
+                Image(
+                    painter = painterResource(R.drawable.edit),
+                    contentDescription = "Edit Icon",
+                    modifier = Modifier.size(23.dp, 20.dp)
+                )
+                Spacer(modifier = Modifier.width(25.dp))
+                Image(
+                    painter = painterResource(R.drawable.trash),
+                    contentDescription = "Trash Icon",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clickable {
+//                            selectedClass = "${classItem.class_name}/${classItem.class_code}"
+//                            showDialog = true
+                        }
+                )
             }
         }
     }

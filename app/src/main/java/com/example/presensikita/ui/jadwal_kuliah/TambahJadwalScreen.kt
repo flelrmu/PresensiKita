@@ -43,6 +43,7 @@ import com.example.presensikita.R
 import com.example.presensikita.data.JadwalKuliah
 import com.example.presensikita.data.UserProfile
 import com.example.presensikita.dummySchedules
+import com.example.presensikita.ui.header
 import com.example.presensikita.ui.theme.PresensiKitaTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,57 +62,24 @@ fun TambahJadwalScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "ABF ",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF00AF4F)
-                )
-                Text(
-                    text = "Solutions",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-            Row {
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notifications",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-                IconButton(onClick = { /* Handle profile */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-            }
-        }
+
+        header()
 
         // Chevron Icon
+
+        Spacer(modifier = Modifier.height(50.dp))
+
         Image(
             painter = painterResource(id = R.drawable.leftchevron),
-            contentDescription = "Kembali",
+            contentDescription = "Chevron Icon",
             modifier = Modifier
                 .align(Alignment.Start)
-                .padding(start = 10.dp, top = 40.dp, bottom = 24.dp)
-                .size(24.dp, 24.dp)
+                .padding(start = 0.dp)
+                .size(33.dp, 31.dp)
         )
+
+        Spacer(modifier = Modifier.height(30.dp))
+
 
         // Judul Tabel
         Text(
@@ -201,5 +169,16 @@ fun TambahJadwalScreen(
             }
         }
 
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewTambahJadwalScreen() {
+    PresensiKitaTheme {
+        TambahJadwalScreen(
+            onAddClick = {},
+            onBack = {}
+        )
     }
 }

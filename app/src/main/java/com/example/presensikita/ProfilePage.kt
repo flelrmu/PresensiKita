@@ -12,8 +12,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.presensikita.ui.header
 
 @Composable
 fun ProfileScreen(
@@ -27,47 +29,22 @@ fun ProfileScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top Bar
-        Row(
+        header()
+
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.leftchevron),
+            contentDescription = "Chevron Icon",
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "ABF ",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = Color(0xFF00AF4F)
-                )
-                Text(
-                    text = "Solutions",
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-            Row {
-                IconButton(onClick = { /* Handle notification */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notifications",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-                IconButton(onClick = { /* Handle profile */ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile",
-                        tint = Color(0xFF00AF4F),
-                        modifier = Modifier
-                            .size(28.dp)
-                    )
-                }
-            }
-        }
+                .align(Alignment.Start)
+                .padding(start = 0.dp)
+                .size(33.dp, 31.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
 
         Text(
             text = "Your Profile",
@@ -120,6 +97,8 @@ fun ProfileScreen(
                 modifier = Modifier
                     .clickable { onChangePasswordClick() }  // Menambahkan fungsi klik
             )
+
+            Spacer(modifier = Modifier.width(16.dp))
 
             Text(
                 text = "Edit Profile",
@@ -176,4 +155,14 @@ private fun ProfileSection(
             style = MaterialTheme.typography.bodyLarge
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(
+        onChangePasswordClick = {},
+        onEditProfileClick = {},
+        onLogoutClick = {}
+    )
 }
