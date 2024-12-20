@@ -124,7 +124,7 @@ fun ScheduleTable(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-//            .padding(16.dp)
+            .padding(2.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -144,7 +144,7 @@ fun ScheduleTable(
                 modifier = Modifier
                     .fillMaxWidth()
 //                    .padding(vertical = 1.dp)
-                    .border(0.35.dp, Color.LightGray), // Border di setiap baris
+                    .border(0.4.dp, Color.LightGray), // Border di setiap baris
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TableCell(schedule.kelas)
