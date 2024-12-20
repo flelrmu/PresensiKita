@@ -1,6 +1,11 @@
 package com.example.presensikita
 
+import android.net.Uri
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -14,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import coil.compose.rememberAsyncImagePainter
 import com.example.presensikita.data.UserProfile
 import com.example.presensikita.ui.header
 
@@ -29,6 +36,16 @@ fun EditProfileScreen(
 
     // State untuk validasi email
     var isEmailValid by remember { mutableStateOf(true) }
+
+    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Launcher untuk membuka galeri
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            if (uri != null) profileImageUri = uri
+        }
+    )
 
     Column(
         modifier = Modifier
@@ -61,14 +78,58 @@ fun EditProfileScreen(
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
-        // Profile Image
-        Image(
-            painter = painterResource(id = R.drawable.profile),
-            contentDescription = "Profile Picture",
+//        // Profile Image
+//        Image(
+//            painter = painterResource(id = R.drawable.profile),
+//            contentDescription = "Profile Picture",
+//            modifier = Modifier
+//                .size(120.dp)
+//                .clip(CircleShape)
+//        )
+
+        // Foto profil
+        Box(
             modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-        )
+                .size(145.dp),
+//                .clip(CircleShape),
+//                .background(Color.Gray),
+            contentAlignment = Alignment.Center
+        ) {
+            if (profileImageUri != null) {
+                Image(
+                    painter = rememberAsyncImagePainter(profileImageUri),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.profile), // Gambar default
+                    contentDescription = "Default Profile Picture",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            }
+
+            // Tombol untuk mengubah foto
+            IconButton(
+                onClick = { galleryLauncher.launch("image/*") },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(32.dp)
+                    .offset(x = 4.dp, y = 8.dp) // Offset untuk memperbaiki posisi
+                    .zIndex(1f) // Prioritas rendering lebih tinggi
+                    .background(MaterialTheme.colorScheme.primary, CircleShape)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.edit), // Ikon edit
+                    contentDescription = "Edit Icon",
+                    tint = Color.White
+                )
+            }
+        }
 
         // Form Fields
         Column(

@@ -87,6 +87,9 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Image Loading
+    implementation("io.coil-kt:coil-compose:2.2.2")
+
     // Unit Testing Dependencies
     testImplementation("junit:junit:4.13.2")
 
