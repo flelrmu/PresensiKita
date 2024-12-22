@@ -1,5 +1,9 @@
 package com.example.presensikita.ui.components
 
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,10 +21,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.ui.header
+
+class HomePageActivity : ComponentActivity() {
+//    private val HomePageViewModel: HomePageViewModel by viewModel()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("HomePage", "HomePage Activity Launched")
+        setContent {
+//            HomePagePreview()
+            HomePage()
+        }
+    }
+}
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
+    Log.d("HomePage", "HomePage is being composed")
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -28,43 +48,14 @@ fun HomePage(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Bagian atas (Header dengan logo dan ikon)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Logo aplikasi
-            Image(
-                painter = painterResource(id = R.drawable.solutions), // Ganti dengan ID logo
-                contentDescription = "Solutions Icon",
-                modifier = Modifier.size(144.dp, 30.dp) // Sesuaikan ukuran logo
-            )
 
-            // Icon notifikasi dan profil
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification), // Ganti dengan ID notifikasi
-                    contentDescription = "Notification Icon",
-                    modifier = Modifier
-                        .size(43.dp, 31.dp)
-                        .padding(end = 8.dp) // Jarak antar ikon
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.profile), // Ganti dengan ID profil
-                    contentDescription = "Profile Icon",
-                    modifier = Modifier.size(43.dp, 31.dp)
-                )
-            }
-        }
+        Log.d("HomePage", "Header is being composed")
+        header()
 
         // Spacer dinamis untuk menggeser logo dan tombol ke tengah
         Spacer(modifier = Modifier.weight(1f))
 
+        Log.d("HomePage", "Logo is being composed")
         // Logo di tengah
         Image(
             painter = painterResource(id = R.drawable.solutions__converted_), // Ganti dengan ID logo tengah
@@ -78,6 +69,7 @@ fun HomePage(modifier: Modifier = Modifier) {
         // Spacer tambahan antara logo dan tombol
         Spacer(modifier = Modifier.height(24.dp)) // Tambahkan Spacer untuk memberi jarak lebih
 
+        Log.d("HomePage", "Buttons are being composed")
         // Tombol-tombol utama
         Column(
             modifier = Modifier.fillMaxWidth(),

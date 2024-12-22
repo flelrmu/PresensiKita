@@ -20,6 +20,21 @@
             android:exported="true"
             android:theme="@style/Theme.PresensiKita"/>
         <activity
+            android:name=".ui.components.HomePageActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PresensiKita"/>
+
+        <activity
+            android:name=".ui.ProfilePageActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PresensiKita"/>
+
+        <activity
+            android:name=".ui.components.ChangePasswordActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PresensiKita"/>
+
+        <activity
             android:name=".ui.components.DownloadReportActivity"
             android:exported="true"
             android:theme="@style/Theme.PresensiKita"/>

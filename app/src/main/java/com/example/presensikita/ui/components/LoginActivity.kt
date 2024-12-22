@@ -1,14 +1,18 @@
 package com.example.presensikita.ui.components
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -36,9 +40,18 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            LoginScreen { email, password ->
-                loginViewModel.login(LoginRequest(email, password))
+        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("access_token", null)
+
+        if (!token.isNullOrEmpty()) {
+            // Token masih ada, arahkan ke halaman utama
+            startActivity(Intent(this, HomePageActivity::class.java))
+            finish()
+        } else {
+            setContent {
+                LoginScreen { email, password ->
+                    loginViewModel.login(LoginRequest(email, password))
+                }
             }
         }
 
@@ -46,12 +59,34 @@ class LoginActivity : ComponentActivity() {
         loginViewModel.loginResponse.observe(this, Observer { response ->
             if (response != null) {
                 if (response.isSuccessful) {
-                    // Login berhasil, pindah ke ClassListActivity
-                    val intent = Intent(this, ClassListActivity::class.java)
+
+                    var namaAdmin: String = ""
+                    response.body()?.let { loginResponse ->
+                        // Simpan token dan refresh token
+                        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                        with(sharedPreferences.edit()) {
+                            putString("access_token", loginResponse.accessToken)
+                            putString("refresh_token", loginResponse.refreshToken)
+                            // Konversi dan simpan ID sebagai Integer
+                            putInt("user_id", loginResponse.admin.id ?: 0)
+                            putString("user_name", loginResponse.admin.nama ?: "")
+                            namaAdmin = loginResponse.admin.nama ?: ""
+                            putString("user_email", loginResponse.admin.email ?: "")
+                            putInt("user_departemen_id", loginResponse.admin.departemen_id ?: 0)
+                            putString("user_departemen", loginResponse.admin.nama_departemen ?: "")
+                            putString("user_fakultas", loginResponse.admin.fakultas ?: "")
+                            putString("user_foto_profile", loginResponse.admin.foto_profile)
+                            apply()
+                        }
+                    }
+
+                    Log.d("LoginActivity", "Navigating to HomePage")
+                    Toast.makeText(this, "Login berhasil \n Login Sebagai ${namaAdmin}", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, HomePageActivity::class.java)
                     startActivity(intent)
                     finish() // Tutup LoginActivity agar tidak bisa kembali
                 } else {
-                    Toast.makeText(this, "Login gagal: ${response.code()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Login gagal: ${response.code()} \n Email atau Password Salah", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Terjadi kesalahan, silakan coba lagi.", Toast.LENGTH_SHORT).show()
@@ -67,14 +102,18 @@ fun LoginScreen(onLoginClick: (String, String) -> Unit) {
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) } // Menyimpan status visibility password
 
+    val scrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+//            .verticalScroll(scrollState)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(scrollState)
                 .align(Alignment.Center), // Konten di tengah layar
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

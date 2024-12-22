@@ -1,15 +1,18 @@
 package com.example.presensikita.ui
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier // 正确导入 Modifier
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,6 +23,9 @@ import com.example.presensikita.R
 fun header() {
     // Header content
     // Header
+
+    // Mendapatkan konteks saat ini
+    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -59,7 +65,11 @@ fun header() {
             Image(
                 painter = painterResource(id = R.drawable.profile),
                 contentDescription = "Profile Icon",
-                modifier = Modifier.size(43.dp, 31.dp)
+                modifier = Modifier
+                    .size(43.dp, 31.dp)
+                    .clickable {
+                        context.startActivity(Intent(context, ProfilePageActivity::class.java))
+                    }
             )
         }
     }
