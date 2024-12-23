@@ -82,6 +82,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.runtime.livedata)
 
     // Debugging tools
     debugImplementation("androidx.compose.ui:ui-tooling")

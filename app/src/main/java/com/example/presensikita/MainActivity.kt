@@ -39,16 +39,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// Fungsi untuk data dummy
-fun dummySchedules(): List<JadwalKuliah> {
-    return listOf(
-        JadwalKuliah("Kalkulus", "Kamis", "13.30-15.00", "Ruang 101"),
-        JadwalKuliah("Akuisisi Data", "Rabu", "09.20-11.00", "Ruang 203"),
-        JadwalKuliah("Pemrograman", "Selasa", "10.00-12.00", "Ruang 105"),
-        JadwalKuliah("Basis Data", "Jumat", "08.00-10.00", "Ruang 102")
-    )
-}
-
 
 @Preview(showBackground = true)
 @Composable

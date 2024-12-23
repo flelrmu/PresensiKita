@@ -1,5 +1,7 @@
 package com.example.presensikita.ui.components
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
 import com.example.presensikita.ui.header
+import com.example.presensikita.ui.jadwal_kuliah.DaftarJadwalKuliahActivity
 
 class HomePageActivity : ComponentActivity() {
 //    private val HomePageViewModel: HomePageViewModel by viewModel()
@@ -40,6 +44,10 @@ class HomePageActivity : ComponentActivity() {
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
+    // Mendapatkan konteks saat ini
+    val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+
     Log.d("HomePage", "HomePage is being composed")
     Column(
         modifier = modifier
@@ -79,7 +87,9 @@ fun HomePage(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(12.dp))
             HomeButton(text = "Daftar Dosen", onClick = { /* Aksi tombol */ })
             Spacer(modifier = Modifier.height(12.dp))
-            HomeButton(text = "Jadwal Perkuliahan", onClick = { /* Aksi tombol */ })
+            HomeButton(text = "Jadwal Perkuliahan", onClick = {
+                context.startActivity(Intent(context, DaftarJadwalKuliahActivity::class.java))
+            })
         }
 
         // Spacer dinamis untuk memastikan tombol dan logo tetap di tengah

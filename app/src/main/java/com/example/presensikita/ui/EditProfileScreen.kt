@@ -1,12 +1,19 @@
 package com.example.presensikita.ui
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,53 +33,194 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.presensikita.R
 import com.example.presensikita.data.UserProfile
 import com.example.presensikita.finish
+import com.example.presensikita.ui.viewModel.EditProfileViewModel
 
-class EditProfileScreenActivity : ComponentActivity() {
+class EditProfileActivity : ComponentActivity() {
+    private val viewModel: EditProfileViewModel by viewModels()
+
+//    private val PERMISSION_REQUEST_CODE = 123
+
+//    private fun checkAndRequestPermissions() {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            // Untuk Android 13 ke atas
+//            when {
+//                ContextCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.READ_MEDIA_IMAGES
+//                ) == PackageManager.PERMISSION_GRANTED -> {
+//                    // Permission sudah diberikan
+//                }
+//                else -> {
+//                    // Minta permission
+//                    ActivityCompat.requestPermissions(
+//                        this,
+//                        arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
+//                        PERMISSION_REQUEST_CODE
+//                    )
+//                }
+//            }
+//        } else {
+//            // Untuk Android 12 ke bawah
+//            when {
+//                ContextCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.READ_EXTERNAL_STORAGE
+//                ) == PackageManager.PERMISSION_GRANTED -> {
+//                    // Permission sudah diberikan
+//                }
+//                else -> {
+//                    // Minta permission
+//                    ActivityCompat.requestPermissions(
+//                        this,
+//                        arrayOf(
+//                            Manifest.permission.READ_EXTERNAL_STORAGE,
+//                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                        ),
+//                        PERMISSION_REQUEST_CODE
+//                    )
+//                }
+//            }
+//        }
+//    }
+
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions as Array<String>, grantResults)
+//        when (requestCode) {
+//            PERMISSION_REQUEST_CODE -> {
+//                if (grantResults.isNotEmpty() &&
+//                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // Permission diberikan
+//                    Toast.makeText(
+//                        this,
+//                        "Permission diberikan",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                } else {
+//                    // Permission ditolak
+//                    Toast.makeText(
+//                        this,
+//                        "Permission diperlukan untuk mengakses foto",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }
+//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get user data from SharedPreferences
+        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val token = sharedPreferences.getString("access_token", "") ?: ""
+        val currentName = sharedPreferences.getString("user_name", "") ?: ""
+        val currentEmail = sharedPreferences.getString("user_email", "") ?: ""
+        val currentDepartemenId = sharedPreferences.getInt("user_departemen_id", 0)
+        val currentPhotoUrl = sharedPreferences.getString("user_foto_profile", null)
+
         setContent {
             EditProfileScreen(
-                onSaveClick = { profile ->
-                    // Lakukan sesuatu dengan data yang diperoleh
-                    finish()
-                },
-                initialProfile = UserProfile(
-                    nama = "John Doe",
-                    email = "johndoe@example.com",
-                    departemen = "Computer Science",
-                    fakultas = "Science"
-                )
+                viewModel = viewModel,
+                token = token,
+                initialName = currentName,
+                initialEmail = currentEmail,
+                initialDepartemenId = currentDepartemenId,
+                currentPhotoUrl = currentPhotoUrl
             )
         }
+
+        // Observe update result
+        viewModel.updateResult.observe(this) { result ->
+            result.fold(
+                onSuccess = { response ->
+                    // Update SharedPreferences with new data
+                    with(sharedPreferences.edit()) {
+                        putString("user_name", response.admin.nama)
+                        putString("user_email", response.admin.email)
+                        putInt("user_departemen_id", response.admin.departemen_id ?: 0)
+                        // Get department details from the departments list
+                        val department = viewModel.departments.value?.find {
+                            it.departemen_id == response.admin.departemen_id
+                        }
+                        putString("user_departemen", department?.nama_departemen)
+                        putString("user_fakultas", department?.fakultas)
+                        putString("user_foto_profile", response.admin.foto_profile)
+                        apply()
+                    }
+                    Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                    // Force refresh SharedPreferences in ProfilePageActivity
+                    val intent = Intent(this, ProfilePageActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    startActivity(intent)
+                    finish()
+                },
+                onFailure = { exception ->
+                    Toast.makeText(this, "Update failed: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
+        // Load departments
+        viewModel.getDepartments()
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-    onSaveClick: (UserProfile) -> Unit,
-    initialProfile: UserProfile = UserProfile()
+//    onSaveClick: (UserProfile) -> Unit,
+//    initialProfile: UserProfile = UserProfile()
+    viewModel: EditProfileViewModel,
+    token: String,
+    initialName: String,
+    initialEmail: String,
+    initialDepartemenId: Int,
+    currentPhotoUrl: String?
 ) {
-    var profile by remember { mutableStateOf(initialProfile) }
+//    var profile by remember { mutableStateOf(initialProfile) }
+//    val scrollState = rememberScrollState()
+//
+//    val context = LocalContext.current
+//
+//    // State untuk validasi email
+//    var isEmailValid by remember { mutableStateOf(true) }
+//
+//    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+//
+//    // Launcher untuk membuka galeri
+//    val galleryLauncher = rememberLauncherForActivityResult(
+//        contract = ActivityResultContracts.GetContent(),
+//        onResult = { uri ->
+//            if (uri != null) profileImageUri = uri
+//        }
+//    )
+
+    var name by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf(initialEmail) }
+    var selectedDepartemenId by remember { mutableStateOf(initialDepartemenId) }
+    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+    var isEmailValid by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
+
+    val departments by viewModel.departments.observeAsState(initial = emptyList())
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
-    val context = LocalContext.current
-
-    // State untuk validasi email
-    var isEmailValid by remember { mutableStateOf(true) }
-
-    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    // Launcher untuk membuka galeri
     val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            if (uri != null) profileImageUri = uri
-        }
-    )
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { profileImageUri = it }
+    }
 
     Column(
         modifier = Modifier
@@ -94,7 +243,8 @@ fun EditProfileScreen(
                 .padding(start = 0.dp)
                 .size(33.dp, 31.dp)
                 .clickable {
-                    context.startActivity(Intent(context, ProfilePageActivity::class.java))
+//                    context.startActivity(Intent(context, ProfilePageActivity::class.java))
+                    (context as Activity).finish()
                 }
         )
 
@@ -116,8 +266,16 @@ fun EditProfileScreen(
             contentAlignment = Alignment.Center
         ) {
             if (profileImageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(profileImageUri),
+                AsyncImage(
+                    model = profileImageUri,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                )
+            } else if (!currentPhotoUrl.isNullOrEmpty()) {
+                AsyncImage(
+                    model = currentPhotoUrl,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .fillMaxSize()
@@ -125,7 +283,7 @@ fun EditProfileScreen(
                 )
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.profile), // Gambar default
+                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
                     contentDescription = "Default Profile Picture",
                     modifier = Modifier
                         .fillMaxSize()
@@ -133,19 +291,16 @@ fun EditProfileScreen(
                 )
             }
 
-            // Tombol untuk mengubah foto
             IconButton(
                 onClick = { galleryLauncher.launch("image/*") },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .size(32.dp)
-                    .offset(x = 4.dp, y = 8.dp) // Offset untuk memperbaiki posisi
-                    .zIndex(1f) // Prioritas rendering lebih tinggi
                     .background(MaterialTheme.colorScheme.primary, CircleShape)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.edit), // Ikon edit
-                    contentDescription = "Edit Icon",
+                    painter = painterResource(id = R.drawable.edit),
+                    contentDescription = "Change Photo",
                     tint = Color.White
                 )
             }
@@ -160,8 +315,8 @@ fun EditProfileScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             OutlinedTextField(
-                value = profile.nama,
-                onValueChange = { profile = profile.copy(nama = it) },
+                value = name,
+                onValueChange = { name = it },
                 label = { Text("Nama") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -172,10 +327,9 @@ fun EditProfileScreen(
             )
 
             OutlinedTextField(
-                value = profile.email,
+                value = email,
                 onValueChange = {
-                    profile = profile.copy(email = it)
-                    // Periksa validasi email
+                    email = it
                     isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(it).matches()
                 },
                 label = { Text("Email") },
@@ -197,17 +351,54 @@ fun EditProfileScreen(
                 )
             }
 
-            OutlinedTextField(
-                value = profile.departemen,
-                onValueChange = { profile = profile.copy(departemen = it) },
-                label = { Text("Departemen") },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
+            // Department Dropdown
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .padding(horizontal = 0.dp)
+            ) {
+                OutlinedTextField(
+                    value = departments.find { it.departemen_id == selectedDepartemenId }?.let {
+                        "${it.nama_departemen}/${it.fakultas}"
+                    } ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Department") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier.menuAnchor()
                 )
-            )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    departments.forEach { department ->
+                        DropdownMenuItem(
+                            text = {
+                                Text("${department.nama_departemen}/${department.fakultas}")
+                            },
+                            onClick = {
+                                selectedDepartemenId = department.departemen_id
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+//            OutlinedTextField(
+//                value = profile.departemen,
+//                onValueChange = { profile = profile.copy(departemen = it) },
+//                label = { Text("Departemen") },
+//                modifier = Modifier.fillMaxWidth(),
+//                singleLine = true,
+//                colors = TextFieldDefaults.outlinedTextFieldColors(
+//                    focusedBorderColor = Color.Black,
+//                    unfocusedBorderColor = Color.Black
+//                )
+//            )
 
 //            OutlinedTextField(
 //                value = profile.fakultas,
@@ -230,7 +421,16 @@ fun EditProfileScreen(
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { onSaveClick(profile) },
+                onClick = {
+                    viewModel.updateProfile(
+                        context,
+                        token,
+                        name,
+                        email,
+                        selectedDepartemenId,
+                        profileImageUri
+                    )
+                },
                 modifier = Modifier
                     .wrapContentWidth()
                     .padding(vertical = 50.dp),
@@ -248,13 +448,16 @@ fun EditProfileScreen(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun PreviewEditProfileScreen() {
+fun EditProfileScreenPreview() {
     EditProfileScreen(
-        onSaveClick = {},
-        initialProfile = UserProfile()
+        viewModel = EditProfileViewModel(),
+        token = "eyJ0eXAiOiJKV1QiLCJh",
+        initialName = "John Doe",
+        initialEmail = "johndoe@example.com",
+        initialDepartemenId = 1,
+        currentPhotoUrl = null
     )
 }
 

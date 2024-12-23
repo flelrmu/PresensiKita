@@ -1,5 +1,6 @@
 package com.example.presensikita.ui.components
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -125,7 +126,8 @@ fun ChangePasswordScreen(
                     .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
                     .clickable {
-                        context.startActivity(Intent(context, ProfilePageActivity::class.java))
+//                        context.startActivity(Intent(context, ProfilePageActivity::class.java))
+                        (context as Activity).finish()
                     }
             )
 

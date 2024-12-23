@@ -11,8 +11,9 @@ data class UserProfile(
 
 // Data jadwal kuliah
 data class JadwalKuliah(
-    val kelas: String,
-    val hari: String,
-    val jam: String,
-    val ruang: String
+    var kode: String,
+    var kelas: String,
+    var hari: String,
+    var jam: String,
+    var ruang: String
 )

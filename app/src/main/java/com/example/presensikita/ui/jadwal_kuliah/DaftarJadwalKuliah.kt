@@ -1,48 +1,81 @@
 package com.example.presensikita.ui.jadwal_kuliah
 
 import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
+import com.example.presensikita.configs.RetrofitClient.jadwalService
 import com.example.presensikita.data.JadwalKuliah
-import com.example.presensikita.dummySchedules
-import com.example.presensikita.ui.components.AddClassActivity
+import com.example.presensikita.data.api.JadwalService
+import com.example.presensikita.ui.components.HomePageActivity
 import com.example.presensikita.ui.header
 import com.example.presensikita.ui.theme.PresensiKitaTheme
+import com.example.presensikita.ui.viewModel.JadwalUiModel
+import com.example.presensikita.ui.viewModel.JadwalUiState
+import com.example.presensikita.ui.viewModel.JadwalViewModel
+import com.example.presensikita.ui.viewModel.JadwalViewModelFactory
 
+class DaftarJadwalKuliahActivity : ComponentActivity() {
+
+    private val viewModel: JadwalViewModel by viewModels {
+        JadwalViewModelFactory(jadwalService, applicationContext)
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            PresensiKitaTheme {
+                ScheduleTableScreen(viewModel)
+            }
+        }
+    }
+}
 @Composable
 fun ScheduleTableScreen(
-    schedules: List<JadwalKuliah>,
-    onBack: () -> Unit,
-//    onProfileClick: () -> Unit,
-//    onAddJadwal: () -> Unit,
-//    onEditJadwal: () -> Unit,
-//    kembali: () -> Unit
+    viewModel: JadwalViewModel
 ) {
     val scrollState = rememberScrollState()
+    // Mendapatkan konteks saat ini
+    val context = LocalContext.current
+
+    val uiState by viewModel.uiState.collectAsState()
+
+//    val jadwalList by viewModel.jadwalState.collectAsState()
+
+    // Tambahkan logging
+    LaunchedEffect(uiState) {
+        Log.d("ScheduleTableScreen", "Current UI State: $uiState")
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadJadwal()
+    }
 
     Column(
         modifier = Modifier
@@ -65,6 +98,9 @@ fun ScheduleTableScreen(
                 .align(Alignment.Start)
                 .padding(start = 0.dp)
                 .size(33.dp, 31.dp)
+                .clickable {
+                    context.startActivity(Intent(context, HomePageActivity::class.java))
+                }
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -72,7 +108,7 @@ fun ScheduleTableScreen(
 
         // Judul Tabel
         Text(
-            text = "Jadwal Kuliah",
+            text = "Daftar Jadwal Kuliah",
             style = MaterialTheme.typography.headlineLarge,
             color = Color.Black,
             modifier = Modifier.padding(start = 12.dp, bottom = 32.dp)
@@ -100,73 +136,36 @@ fun ScheduleTableScreen(
                 modifier = Modifier
                     .size(29.dp, 28.dp)
                     .clickable {
-//                        context.startActivity(Intent(context, AddClassActivity::class.java))
+                        context.startActivity(Intent(context, TambahJadwalActivity::class.java))
                     }
             )
         }
 
-        ScheduleTable(
-            schedules = listOf(
-                JadwalKuliah("Kalkulus", "Kamis", "13.30 - 15.00", "Ruang A"),
-                JadwalKuliah("Akuisisi Data", "Rabu", "9.20 - 11.00", "Ruang B"),
-                JadwalKuliah("Sistem Basis Data", "Senin", "10.00 - 12.00", "Ruang C")
-            )
-//            onEditJadwal
-        )
-    }
-}
+//        ScheduleTable(schedules = jadwalList)
 
-@Composable
-fun ScheduleTable(
-    schedules: List<JadwalKuliah>
-//    onEditJadwal: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(2.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .border(2.dp, Color.LightGray)
-                .padding(vertical = 1.dp)
-                .background(Color.LightGray)
-        ) {
-            TableHeader("Kelas")
-            TableHeader("Hari")
-            TableHeader("Jam")
-            TableHeader("Ruang")
-            Spacer(Modifier.width(16.dp))
-        }
-
-        schedules.forEach { schedule ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(vertical = 1.dp)
-                    .border(0.4.dp, Color.LightGray), // Border di setiap baris
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TableCell(schedule.kelas)
-                TableCell(schedule.hari)
-                TableCell(schedule.jam)
-                TableCell(schedule.ruang)
-                Spacer(modifier = Modifier.weight(1f))
-                Image(
-                    painter = painterResource(R.drawable.edit),
-                    contentDescription = "Edit Icon",
-                    modifier = Modifier.size(23.dp, 20.dp)
-                )
-                Spacer(modifier = Modifier.width(25.dp))
-                Image(
-                    painter = painterResource(R.drawable.trash),
-                    contentDescription = "Trash Icon",
+        when (uiState) {
+            is JadwalUiState.Loading -> {
+                Box(
                     modifier = Modifier
-                        .size(20.dp)
-                        .clickable {
-//                            selectedClass = "${classItem.class_name}/${classItem.class_code}"
-//                            showDialog = true
-                        }
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Loading...")
+                }
+            }
+            is JadwalUiState.Success -> {
+                val data = (uiState as JadwalUiState.Success).data
+                Log.d("ScheduleTableScreen", "Showing data: $data")
+                ScheduleTable(data)
+            }
+            is JadwalUiState.Error -> {
+                val error = (uiState as JadwalUiState.Error).message
+                Log.e("ScheduleTableScreen", "Error: $error")
+                Text(
+                    text = error,
+                    color = Color.Red,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
         }
@@ -174,43 +173,160 @@ fun ScheduleTable(
 }
 
 @Composable
-fun TableHeader(text: String, widthFraction: Float = 0.25f) {
-    Text(
-        text = text,
+fun ScheduleTable(
+//    schedules: List<JadwalKuliah>
+    jadwalList: List<JadwalUiModel>
+) {
+    Column(
         modifier = Modifier
-            .fillMaxWidth(widthFraction)
-            .padding(horizontal = 1.dp),
-        fontSize = 11.sp,
-        color = Color.Black,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center
-    )
-}
+            .fillMaxWidth()
+            .padding(2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(2.dp, Color.LightGray)
+                .padding(vertical = 1.dp)
+                .background(Color.LightGray)
+        ) {
+            TableHeader(
+                text = "Kode",
+                modifier = Modifier
+                    .weight(0.9f)
+                    .align(Alignment.CenterVertically)
+            )
+            TableHeader(
+                text = "Kelas",
+                modifier = Modifier
+                    .weight(1.2f)
+                    .align(Alignment.CenterVertically)
+            )
+            TableHeader(
+                text = "Hari",
+                modifier = Modifier
+                    .weight(0.9f)
+                    .align(Alignment.CenterVertically)
+            )
+            TableHeader(
+                text = "Jam Mulai",
+                modifier = Modifier
+                    .weight(0.9f)
+                    .align(Alignment.CenterVertically)
+            )
+            TableHeader(
+                text = "Ruang",
+                modifier = Modifier
+                    .weight(0.9f)
+                    .align(Alignment.CenterVertically)
+            )
+            Spacer(Modifier.width(70.dp)) // Memperbesar space untuk action buttons
+        }
 
-
-@Composable
-fun TableCell(text: String, widthFraction: Float = 0.25f) {
-    Text(
-        text = text,
-        modifier = Modifier
-            .fillMaxWidth(widthFraction)
-            .padding(horizontal = 1.dp),
-        fontSize = 11.sp,
-        color = Color.Black,
-        textAlign = TextAlign.Center
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun Preview() {
-    PresensiKitaTheme {
-        ScheduleTableScreen(
-            schedules = dummySchedules(),
-            onBack = { finish() } // Aksi untuk tombol kembali
-        )
+        jadwalList.forEach { schedule ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp)
+                    .border(0.4.dp, Color.LightGray),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TableCell(
+                    text = schedule.kode,
+                    modifier = Modifier.weight(0.9f)
+                )
+                TableCell(
+                    text = schedule.nama,
+                    modifier = Modifier.weight(1.2f)
+                )
+                TableCell(
+                    text = schedule.hari,
+                    modifier = Modifier.weight(0.9f)
+                )
+                TableCell(
+                    text = schedule.jamMulai,
+                    modifier = Modifier.weight(1f)
+                )
+                TableCell(
+                    text = schedule.ruang,
+                    modifier = Modifier.weight(0.9f)
+                )
+                Column(
+                    modifier = Modifier
+                        .width(70.dp)  // Fixed width untuk area action buttons
+                        .padding(horizontal = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.edit),
+                        contentDescription = "Edit Icon",
+                        modifier = Modifier
+                            .size(23.dp, 20.dp)
+                            .clickable { }
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Image(
+                        painter = painterResource(R.drawable.trash),
+                        contentDescription = "Trash Icon",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clickable { }
+                    )
+                }
+            }
+        }
     }
 }
+
+@Composable
+fun TableHeader(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        fontSize = 12.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+            .padding(5.dp)
+            .fillMaxWidth()
+    )
+}
+
+
+@Composable
+fun TableCell(
+    text: String,
+    modifier: Modifier = Modifier
+) {
+    Text(
+        text = text,
+        fontSize = 12.sp,
+        modifier = modifier
+            .padding(horizontal = 5.dp, vertical = 12.dp)
+            .fillMaxWidth()
+    )
+}
+
+// Fungsi untuk data dummy
+fun dummySchedules(): List<JadwalKuliah> {
+    return listOf(
+        JadwalKuliah("if01","Kalkulus", "Kamis", "13.30", "Ruang 101"),
+        JadwalKuliah("if01","Akuisisi Data", "Rabu", "09.20", "Ruang 203"),
+        JadwalKuliah("if01","Pemrograman", "Selasa", "10.00", "Ruang 105"),
+        JadwalKuliah("if01","Basis Data", "Jumat", "08.00", "Ruang 102")
+    )
+}
+
+//@Preview(showBackground = true)
+//@Composable
+//fun Preview() {
+//    PresensiKitaTheme {
+//        ScheduleTableScreen(
+//            jadwalList = dummySchedules()
+//        )
+//    }
+//}
 
 fun finish() {
     TODO("Not yet implemented")

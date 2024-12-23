@@ -36,3 +36,21 @@ data class User(
 data class ChangePasswordResponse(
     val message: String
 )
+
+// Data Classes
+data class Departemen(
+    val departemen_id: Int,
+    val nama_departemen: String,
+    val fakultas: String
+)
+
+// Data class untuk menyimpan data user
+data class UserData(
+    val id: Int,
+    val email: String,
+    val nama: String,
+    val foto_profile: String? = null,
+    val departemen_id: Int,
+    val nama_departemen: String,
+    val fakultas: String
+)

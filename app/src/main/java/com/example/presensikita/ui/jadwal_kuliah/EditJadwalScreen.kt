@@ -1,6 +1,8 @@
 package com.example.presensikita.ui.jadwal_kuliah
 
+import android.app.Activity
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
 import com.example.presensikita.data.JadwalKuliah
 import com.example.presensikita.data.UserProfile
-import com.example.presensikita.dummySchedules
 import com.example.presensikita.ui.header
 import com.example.presensikita.ui.theme.PresensiKitaTheme
 
@@ -50,10 +52,12 @@ import com.example.presensikita.ui.theme.PresensiKitaTheme
 @Composable
 fun EditJadwalScreen(
     onSaveClick: (JadwalKuliah) -> Unit,
-    initialJadwal: JadwalKuliah = JadwalKuliah("", "", "", ""),
+    initialJadwal: JadwalKuliah = JadwalKuliah("","", "", "", ""),
     onBack: () -> Unit
 ) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current
+
     var jadwal by remember { mutableStateOf(initialJadwal) }
 
     Column(
@@ -77,6 +81,10 @@ fun EditJadwalScreen(
                 .align(Alignment.Start)
                 .padding(start = 0.dp)
                 .size(33.dp, 31.dp)
+                .clickable {
+//                    context.startActivity(Intent(context, DaftarJadwalKuliahActivity::class.java))
+                    (context as Activity).finish()
+                }
         )
 
         Spacer(modifier = Modifier.height(30.dp))

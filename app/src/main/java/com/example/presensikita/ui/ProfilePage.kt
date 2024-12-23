@@ -25,9 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.presensikita.R
+import com.example.presensikita.data.model.UserData
 import com.example.presensikita.ui.components.ChangePasswordActivity
 import com.example.presensikita.ui.components.HomePageActivity
 import com.example.presensikita.ui.components.LoginActivity
+import java.io.File
 
 class ProfilePageActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +40,7 @@ class ProfilePageActivity : ComponentActivity() {
             val context = LocalContext.current
             val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
-            // Baca data user dari SharedPreferences
+            // Force refresh user data from SharedPreferences
             val userData = UserData(
                 id = sharedPreferences.getInt("user_id", 0),
                 nama = sharedPreferences.getString("user_name", "") ?: "",
@@ -51,8 +53,6 @@ class ProfilePageActivity : ComponentActivity() {
 
             ProfileScreen(
                 userData = userData,
-                onChangePasswordClick = {},
-                onEditProfileClick = {},
                 onLogoutClick = { logoutUser(context) }
             )
         }
@@ -60,29 +60,21 @@ class ProfilePageActivity : ComponentActivity() {
 
 }
 
-// Data class untuk menyimpan data user
-data class UserData(
-    val id: Int,
-    val email: String,
-    val nama: String,
-    val foto_profile: String? = null,
-    val departemen_id: Int,
-    val nama_departemen: String,
-    val fakultas: String
-)
 
 @Composable
 fun ProfileScreen(
     userData: UserData,
     onLogoutClick: () -> Unit,
-    onEditProfileClick: () -> Unit,
-    onChangePasswordClick: () -> Unit
 ) {
     // Mendapatkan konteks saat ini
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
 
     val scrollState = rememberScrollState()
+
+    // Cek gambar lokal terlebih dahulu
+    val localImagePath = sharedPreferences.getString("local_profile_image", null)
+    val serverImagePath = sharedPreferences.getString("server_profile_image", null)
 
     Column(
         modifier = Modifier
@@ -118,10 +110,20 @@ fun ProfileScreen(
         )
 
         // Profile Image
-        if (userData.foto_profile != null && userData.foto_profile.isNotEmpty()) {
-            // Implementasi loading foto profil dari URL
+        if (localImagePath != null) {
+            // Gunakan gambar lokal
             AsyncImage(
-                model = userData.foto_profile,
+                model = File(localImagePath),
+                contentDescription = "Profile Picture",
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+                error = painterResource(id = R.drawable.ic_profile_placeholder)
+            )
+        } else if (serverImagePath != null && serverImagePath.isNotEmpty()) {
+            // Gunakan gambar dari server
+            AsyncImage(
+                model = serverImagePath,
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(120.dp)
@@ -184,7 +186,9 @@ fun ProfileScreen(
                 color = MaterialTheme.colorScheme.primary,  // Menggunakan warna primary #00AF4F
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .clickable { /* onEditProfileClick() */ }  // Menambahkan fungsi klik
+                    .clickable {
+                        context.startActivity(Intent(context, EditProfileActivity::class.java))
+                    }  // Menambahkan fungsi klik
             )
         }
 
@@ -251,8 +255,6 @@ fun ProfileScreenPreview() {
 
     ProfileScreen(
         userData = previewData,
-        onChangePasswordClick = {},
-        onEditProfileClick = {},
         onLogoutClick = {}
     )
 }

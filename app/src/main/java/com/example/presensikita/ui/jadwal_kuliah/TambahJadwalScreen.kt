@@ -1,6 +1,13 @@
 package com.example.presensikita.ui.jadwal_kuliah
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,23 +50,41 @@ import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
 import com.example.presensikita.data.JadwalKuliah
 import com.example.presensikita.data.UserProfile
-import com.example.presensikita.dummySchedules
+import com.example.presensikita.ui.components.HomePageActivity
 import com.example.presensikita.ui.header
 import com.example.presensikita.ui.theme.PresensiKitaTheme
+
+class TambahJadwalActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            PresensiKitaTheme {
+                TambahJadwalScreen(
+//                    onAddClick = { jadwal ->
+//                        // Handle adding jadwal
+//                    },
+//                    onBack = { finish() }
+                )
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TambahJadwalScreen(
-    onAddClick: (JadwalKuliah) -> Unit,
-    onBack: () -> Unit
+//    onAddClick: (JadwalKuliah) -> Unit,
+//    onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val scrollState = rememberScrollState()
-    var jadwal by remember { mutableStateOf(JadwalKuliah("", "", "", "")) }
+    var jadwal by remember { mutableStateOf(JadwalKuliah("","", "", "", "")) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
+//            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -76,6 +102,10 @@ fun TambahJadwalScreen(
                 .align(Alignment.Start)
                 .padding(start = 0.dp)
                 .size(33.dp, 31.dp)
+                .clickable {
+//                    context.startActivity(Intent(context, DaftarJadwalKuliahActivity::class.java))
+                    (context as Activity).finish()
+                }
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -91,65 +121,73 @@ fun TambahJadwalScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        OutlinedTextField(
-            value = jadwal.kelas,
-            onValueChange = { jadwal = jadwal.copy(kelas = it) },
-            label = { Text("Kelas") },
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
-            ),
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-        )
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            OutlinedTextField(
+                value = jadwal.kelas,
+                onValueChange = { jadwal = jadwal.copy(kelas = it) },
+                label = { Text("Kelas") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+            )
 
-        OutlinedTextField(
-            value = jadwal.hari,
-            onValueChange = { jadwal = jadwal.copy(hari = it) },
-            label = { Text("Hari") },
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-        )
+            OutlinedTextField(
+                value = jadwal.hari,
+                onValueChange = { jadwal = jadwal.copy(hari = it) },
+                label = { Text("Hari") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+            )
 
-        OutlinedTextField(
-            value = jadwal.jam,
-            onValueChange = { jadwal = jadwal.copy(jam = it) },
-            label = { Text("Jam") },
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-        )
+            OutlinedTextField(
+                value = jadwal.jam,
+                onValueChange = { jadwal = jadwal.copy(jam = it) },
+                label = { Text("Jam") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+            )
 
-        OutlinedTextField(
-            value = jadwal.ruang,
-            onValueChange = { jadwal = jadwal.copy(ruang = it) },
-            label = { Text("Ruang") },
-            singleLine = true,
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.Black,
-                unfocusedBorderColor = Color.Black
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 52.dp, vertical = 8.dp),
-            shape = RoundedCornerShape(16.dp),
-        )
+            OutlinedTextField(
+                value = jadwal.ruang,
+                onValueChange = { jadwal = jadwal.copy(ruang = it) },
+                label = { Text("Ruang") },
+                singleLine = true,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+            )
+        }
+
 
 
         Spacer(modifier = Modifier.weight(1f))
@@ -159,7 +197,7 @@ fun TambahJadwalScreen(
             contentAlignment = Alignment.Center
         ) {
             Button(
-                onClick = { onAddClick(jadwal) },
+                onClick = {  },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 48.dp),
@@ -177,8 +215,8 @@ fun TambahJadwalScreen(
 fun PreviewTambahJadwalScreen() {
     PresensiKitaTheme {
         TambahJadwalScreen(
-            onAddClick = {},
-            onBack = {}
+//            onAddClick = {},
+//            onBack = {}
         )
     }
 }
