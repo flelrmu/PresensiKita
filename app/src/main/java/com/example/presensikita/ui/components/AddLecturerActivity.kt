@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.presensikita.R
+import com.example.presensikita.ui.header
 
 class AddLecturerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,39 +44,9 @@ fun AddLecturerScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Header dengan logo dan ikon notifikasi/profil
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.solutions),
-                    contentDescription = "Solutions Icon",
-                    modifier = Modifier.size(144.dp, 30.dp)
-                )
+            header()
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notification Icon",
-                        modifier = Modifier
-                            .size(43.dp, 31.dp)
-                            .padding(end = 8.dp)
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier.size(43.dp, 31.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
             // Tombol kembali
             Image(
