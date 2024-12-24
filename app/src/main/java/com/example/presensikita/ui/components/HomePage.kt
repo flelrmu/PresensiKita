@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
+import com.example.presensikita.ui.header
 
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
@@ -28,44 +29,11 @@ fun HomePage(modifier: Modifier = Modifier) {
             .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Bagian atas (Header dengan logo dan ikon)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Logo aplikasi
-            Image(
-                painter = painterResource(id = R.drawable.solutions), // Ganti dengan ID logo
-                contentDescription = "Solutions Icon",
-                modifier = Modifier.size(144.dp, 30.dp) // Sesuaikan ukuran logo
-            )
+        header()
 
-            // Icon notifikasi dan profil
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification), // Ganti dengan ID notifikasi
-                    contentDescription = "Notification Icon",
-                    modifier = Modifier
-                        .size(43.dp, 31.dp)
-                        .padding(end = 8.dp) // Jarak antar ikon
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.profile), // Ganti dengan ID profil
-                    contentDescription = "Profile Icon",
-                    modifier = Modifier.size(43.dp, 31.dp)
-                )
-            }
-        }
+        Spacer(modifier = Modifier.height(50.dp))
 
-        // Spacer dinamis untuk menggeser logo dan tombol ke tengah
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Logo di tengah
+        // Logo
         Image(
             painter = painterResource(id = R.drawable.solutions__converted_), // Ganti dengan ID logo tengah
             contentDescription = "Logo",
@@ -76,7 +44,7 @@ fun HomePage(modifier: Modifier = Modifier) {
         )
 
         // Spacer tambahan antara logo dan tombol
-        Spacer(modifier = Modifier.height(24.dp)) // Tambahkan Spacer untuk memberi jarak lebih
+        Spacer(modifier = Modifier.height(50.dp)) // Tambahkan Spacer untuk memberi jarak lebih
 
         // Tombol-tombol utama
         Column(
