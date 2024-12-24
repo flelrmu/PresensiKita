@@ -2,15 +2,14 @@ package com.example.presensikita.data.model
 
 data class LoginResponse(
     val message: String,
-    val token: String,
+    val accessToken: String,
     val refreshToken: String,
-    val user: User
+    val admin: Admin
 )
 
-data class User(
+data class Admin(
     val id: Int,
     val email: String,
-    val name: String,
-    val departemen: String,
-    val fakultas: String,
+    val nama: String,
+    val departemen_id: Int,
 )

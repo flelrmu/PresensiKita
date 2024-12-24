@@ -8,28 +8,40 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.ui.viewModel.ClassViewModel
 
-class DownloadReportActivity : ComponentActivity() {
+class AbsenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            DownloadReportScreen()
+            AbsenScreen()
         }
     }
 }
 
 @Composable
-fun DownloadReportScreen() {
+fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
+    val classes by viewModel.classes.collectAsState(initial = emptyList())
+    val presensi by viewModel.presensi.collectAsState(initial = emptyList())
+    val error by viewModel.error.collectAsState(initial = null)
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchClasses()
+        viewModel.fetchPresensi()
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,6 +51,7 @@ fun DownloadReportScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
+            // Header section
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -70,8 +83,9 @@ fun DownloadReportScreen() {
                 }
             }
 
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
+            // Back button and title section
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
@@ -83,7 +97,7 @@ fun DownloadReportScreen() {
 
             Spacer(modifier = Modifier.height(30.dp))
 
-            androidx.compose.material3.Text(
+            Text(
                 text = "Laporan Pertemuan",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
@@ -92,52 +106,46 @@ fun DownloadReportScreen() {
 
             Spacer(modifier = Modifier.height(70.dp))
 
+            if (error != null) {
+                Text(
+                    text = "Terjadi kesalahan: $error\nSilakan coba lagi nanti.",
+                    color = Color.Red,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                // LazyColumn for dynamic data
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    item {
+                        // Header row for the table
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text("Kelas", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                            Text("Dosen", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                            Text("Total Pertemuan", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                        }
+                    }
 
-            val sampleData = listOf(
-                Triple("Kalkulus", "JSI345", "6"),
-                Triple("Akuisisi Data", "JSI876", "7"),
-                Triple("Algoritma", "JSI234", "8"),
-                Triple("Sistem Operasi", "JSI567", "9")
-            )
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text("Kelas", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        Text("Kode", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                        Text("Jumlah Pertemuan", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                    items(classes) { classItem ->
+                        val totalPertemuan = presensi.filter { it.presensi_id == classItem.kode_kelas.toInt() }.sumOf { it.pertemuan }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(classItem.nama_kelas, modifier = Modifier.weight(1f))
+                            Text(classItem.nip, modifier = Modifier.weight(1f))
+                            Text(totalPertemuan.toString(), modifier = Modifier.weight(1f))
+                        }
                     }
                 }
-
-                items(sampleData) { data ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(data.first, modifier = Modifier.weight(1f))
-                        Text(data.second, modifier = Modifier.weight(1f))
-                        Text(data.third, modifier = Modifier.weight(1f))
-                    }
-                }
-            }
-
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            androidx.compose.material3.Button(
-                onClick = { /* Handle login */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
-            ) {
-                androidx.compose.material3.Text(text = "Donwload Laporan Pertemuan", color = Color.White)
             }
         }
     }
@@ -146,5 +154,5 @@ fun DownloadReportScreen() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewDownloadReportScreen() {
-    DownloadReportScreen()
+    AbsenScreen()
 }

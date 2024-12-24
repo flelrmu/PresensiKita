@@ -1,5 +1,6 @@
 package com.example.presensikita.ui.components
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,18 +19,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
 import com.example.presensikita.data.model.Class
-import com.example.presensikita.ui.viewModel.AddClassViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.presensikita.data.model.Lecturer
+import com.example.presensikita.ui.viewModel.ClassViewModel
 
 class AddClassActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val addClassViewModel: AddClassViewModel = viewModel()
-            AddClassScreen(addClassViewModel) { isSuccess ->
+            val viewModel: ClassViewModel = viewModel()
+            AddClassScreen(viewModel) { isSuccess ->
                 if (isSuccess) {
                     val intent = Intent(this, ClassListActivity::class.java)
                     startActivity(intent)
@@ -43,24 +44,23 @@ class AddClassActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddClassScreen(
-    addClassViewModel: AddClassViewModel = viewModel(),
+    viewModel: ClassViewModel = viewModel(),
     onResult: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current
-    var className by remember { mutableStateOf("") }
-    var classCode by remember { mutableStateOf("") }
-    var lecturer by remember { mutableStateOf("") }
+    var namaKelas by remember { mutableStateOf("") }
+    var kodeKelas by remember { mutableStateOf("") }
+    var semester by remember { mutableStateOf("") }
+    var jumlahSks by remember { mutableStateOf("") }
+    var selectedLecturer by remember { mutableStateOf<Lecturer?>(null) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
     var showSnackbar by remember { mutableStateOf(false) }
 
-    val isSuccess by addClassViewModel.isSuccess.collectAsState()
-    val errorMessage by addClassViewModel.errorMessage.collectAsState()
+    val lecturers by viewModel.lecturers.collectAsState()
+    val error by viewModel.error.collectAsState()
 
-
-    LaunchedEffect(isSuccess) {
-        if (isSuccess) {
-            showSnackbar = true
-            onResult(true)
-        }
+    LaunchedEffect(Unit) {
+        viewModel.fetchLecturers()
     }
 
     Box(
@@ -72,6 +72,7 @@ fun AddClassScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
+            // Header Section
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -84,7 +85,6 @@ fun AddClassScreen(
                     contentDescription = "Solutions Icon",
                     modifier = Modifier.size(144.dp, 30.dp)
                 )
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -105,6 +105,7 @@ fun AddClassScreen(
 
             Spacer(modifier = Modifier.height(50.dp))
 
+            // Back Navigation
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
@@ -120,7 +121,7 @@ fun AddClassScreen(
             )
 
             Spacer(modifier = Modifier.height(30.dp))
-
+            // Header Section
             Text(
                 text = "Tambah Kelas",
                 fontSize = 34.sp,
@@ -130,10 +131,11 @@ fun AddClassScreen(
 
             Spacer(modifier = Modifier.height(30.dp))
 
+            // Input Fields
             OutlinedTextField(
-                value = className,
-                onValueChange = { className = it },
-                label = { Text(text = "Nama Kelas") },
+                value = namaKelas,
+                onValueChange = { namaKelas = it },
+                label = { Text("Nama Kelas") },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -146,9 +148,9 @@ fun AddClassScreen(
             )
 
             OutlinedTextField(
-                value = classCode,
-                onValueChange = { classCode = it },
-                label = { Text(text = "Kode Kelas") },
+                value = kodeKelas,
+                onValueChange = { kodeKelas = it },
+                label = { Text("Kode Kelas") },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -161,9 +163,9 @@ fun AddClassScreen(
             )
 
             OutlinedTextField(
-                value = lecturer,
-                onValueChange = { lecturer = it },
-                label = { Text(text = "Dosen Pengampu") },
+                value = jumlahSks,
+                onValueChange = { jumlahSks = it },
+                label = { Text("Jumlah SKS") },
                 singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -174,54 +176,135 @@ fun AddClassScreen(
                     unfocusedBorderColor = Color.Black
                 )
             )
+
+            OutlinedTextField(
+                value = semester,
+                onValueChange = { semester = it },
+                label = { Text("Semester") },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                )
+            )
+
+            // Lecturer Dropdown
+            ExposedDropdownMenuBox(
+                expanded = isDropdownExpanded,
+                onExpandedChange = { isDropdownExpanded = !isDropdownExpanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedLecturer?.nama_dosen ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Dosen Pengampu") },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                        .padding(horizontal = 52.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color.Black,
+                        unfocusedBorderColor = Color.Black
+                    )
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isDropdownExpanded,
+                    onDismissRequest = { isDropdownExpanded = false }
+                ) {
+                    lecturers.forEach { lecturer ->
+                        DropdownMenuItem(
+                            text = { Text("${lecturer.nama_dosen} (${lecturer.nip})") },
+                            onClick = {
+                                selectedLecturer = lecturer
+                                isDropdownExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
                 onClick = {
-                    val newClass = Class(
-                        class_name = className,
-                        class_code = classCode,
-                        lecturer = lecturer
-                    )
-                    addClassViewModel.addClass(newClass)
+                    val sksNumber = jumlahSks.toIntOrNull()
+                    when {
+                        namaKelas.trim().isEmpty() -> {
+                            viewModel.setError("Nama kelas tidak boleh kosong")
+                            return@Button
+                        }
+                        kodeKelas.trim().isEmpty() -> {
+                            viewModel.setError("Kode kelas tidak boleh kosong")
+                            return@Button
+                        }
+                        semester.trim().isEmpty() -> {
+                            viewModel.setError("Semester tidak boleh kosong")
+                            return@Button
+                        }
+                        sksNumber == null || sksNumber <= 0 -> {
+                            viewModel.setError("Jumlah SKS harus berupa angka positif")
+                            return@Button
+                        }
+                        selectedLecturer == null -> {
+                            viewModel.setError("Dosen pengampu harus dipilih")
+                            return@Button
+                        }
+                        else -> {
+                            try {
+                                val newClass = Class(
+                                    kode_kelas = kodeKelas.trim(),
+                                    nama_kelas = namaKelas.trim(),
+                                    nip = selectedLecturer!!.nip,
+                                    jumlah_sks = sksNumber,
+                                    semester = semester.trim(),
+                                )
+                                viewModel.addClass(newClass)
+                                showSnackbar = true
+                                onResult(true)
+                            } catch (e: Exception) {
+                                viewModel.setError("Terjadi kesalahan saat menambah kelas: ${e.message}")
+                            }
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
-                Text(text = "Tambah", color = Color.White)
-            }
-
-            errorMessage?.let {
-                Text(
-                    text = it,
-                    color = Color.Red,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
+                Text("Tambah", color = Color.White)
             }
         }
 
-        if (showSnackbar) {
+        val snackbarMessage = when {
+            error != null -> error
+            showSnackbar -> "Kelas berhasil ditambahkan!"
+            else -> null
+        }
+
+        snackbarMessage?.let {
             Snackbar(
                 action = {
                     Text(
-                        text = "Tutup",
+                        "Tutup",
                         color = Color.White,
-                        modifier = Modifier.clickable { showSnackbar = false }
+                        modifier = Modifier.clickable {
+                            showSnackbar = false
+                            viewModel.setError(null)
+                        }
                     )
                 },
                 modifier = Modifier.align(Alignment.BottomCenter)
             ) {
-                Text(text = "Kelas berhasil ditambahkan!", color = Color.White)
+                Text(it, color = Color.White)
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddClassScreenPreview() {
-    AddClassScreen()
 }

@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +47,8 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    val classes by viewModel.classes.collectAsState()
-    val error by viewModel.error.collectAsState()
+    val classes by viewModel.classes.collectAsState(initial = emptyList())
+    val error by viewModel.error.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         viewModel.fetchClasses()
@@ -104,6 +101,11 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                     .align(Alignment.Start)
                     .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
+                    .clickable {
+                        val intent = Intent(context, HomePageActivity::class.java)
+                        context.startActivity(intent)
+                        (context as? ComponentActivity)?.finish()
+                    }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -112,7 +114,8 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                 text = "Daftar Kelas",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2A2A2A)
+                color = Color(0xFF2A2A2A),
+                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -147,10 +150,11 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
             // LazyColumn for Class List
             if (error != null) {
                 Text(
-                    text = "Error: $error",
+                    text = "Terjadi kesalahan: $error\nSilakan coba lagi nanti.",
                     color = Color.Red,
                     fontSize = 16.sp,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
                 )
             } else {
                 LazyColumn(
@@ -166,29 +170,50 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = "${classItem.class_name}/${classItem.class_code}",
+                                text = "${classItem.nama_kelas}/${classItem.kode_kelas}",
                                 fontSize = 15.sp,
                                 fontFamily = FontFamily.Serif,
                                 color = Color(0xFF2A2A2A),
                                 modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Image(
-                                painter = painterResource(R.drawable.edit),
-                                contentDescription = "Edit Icon",
-                                modifier = Modifier.size(23.dp, 20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(25.dp))
-                            Image(
-                                painter = painterResource(R.drawable.trash),
-                                contentDescription = "Trash Icon",
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .clickable {
-                                        selectedClass = "${classItem.class_name}/${classItem.class_code}"
-                                        showDialog = true
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            IconButton(
+                                onClick = {
+                                    val intent = Intent(context, EditClassActivity::class.java).apply {
+                                        putExtra("KODE_KELAS", classItem.kode_kelas)
+                                        putExtra("NAMA_KELAS", classItem.nama_kelas)
+                                        putExtra("NIP", classItem.nip)
+                                        putExtra("JUMLAH_SKS", classItem.jumlah_sks)
+                                        putExtra("SEMESTER", classItem.semester)
                                     }
-                            )
+                                    context.startActivity(intent)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.edit),
+                                    contentDescription = "Edit" ,
+                                    modifier = Modifier
+                                        .size(23.dp, 20.dp),
+                                    tint = Color(0xFF00A844)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(25.dp))
+
+                            IconButton(
+                                onClick = {
+                                    selectedClass = classItem.kode_kelas // Ambil kode_kelas saja
+                                    showDialog = true
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.trash),
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.size(20.dp),
+                                    tint = Color.Red
+                                )
+                            }
                         }
                     }
                 }
@@ -201,7 +226,7 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                     Box(
                         modifier = Modifier
                             .width(300.dp)
-                            .height(200.dp)
+                            .height(170.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color.White)
                             .padding(16.dp)
@@ -224,12 +249,12 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                                 Button(
                                     onClick = {
                                         showDialog = false
-                                        val classId = classes.firstOrNull {
-                                            "${it.class_name}/${it.class_code}" == selectedClass
-                                        }?.id
-                                        if (classId != null) {
-                                            viewModel.deleteClass(classId)
-                                            snackbarMessage = "Kelas berhasil dihapus!"
+                                        if (selectedClass.isNotEmpty()) {
+                                            viewModel.deleteClass(selectedClass)
+                                            snackbarMessage = "Kelas berhasil dihapus."
+                                            showSnackbar = true
+                                        } else {
+                                            snackbarMessage = "Kode kelas tidak valid."
                                             showSnackbar = true
                                         }
                                     },
@@ -237,6 +262,7 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
                                 ) {
                                     Text(text = "Continue", color = Color.White)
                                 }
+
                                 Button(
                                     onClick = { showDialog = false },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -252,7 +278,10 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { /* Handle Laporan Kehadiran */ },
+                onClick = {
+                    val intent = Intent(context, AbsenActivity::class.java)
+                    context.startActivity(intent)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
