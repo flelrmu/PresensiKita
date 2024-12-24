@@ -4,7 +4,7 @@ import com.example.presensikita.data.model.LoginRequest
 import com.example.presensikita.data.model.LoginResponse
 import com.example.presensikita.data.model.Class
 import com.example.presensikita.data.model.Lecturer
-import com.example.presensikita.data.model.Presensi
+import com.example.presensikita.data.model.PertemuanResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -20,9 +20,6 @@ interface ApiService {
     @GET("classes")
     suspend fun getClasses(): Response<List<Class>>
 
-    @GET("presensi")
-    suspend fun getPresensi(): Response<List<Presensi>>
-
     @POST("classes")
     suspend fun addClass(@Body newClass: Class): Response<Class>
 
@@ -37,4 +34,7 @@ interface ApiService {
 
     @GET("lecturers")
     suspend fun getAllLecturers(): Response<List<Lecturer>>
+
+    @GET("pertemuan")
+    suspend fun getAllPertemuan(): Response<List<PertemuanResponse>>
 }

@@ -1,9 +1,11 @@
 package com.example.presensikita.ui.components
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,13 +36,12 @@ class AbsenActivity : ComponentActivity() {
 
 @Composable
 fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
-    val classes by viewModel.classes.collectAsState(initial = emptyList())
-    val presensi by viewModel.presensi.collectAsState(initial = emptyList())
+    val context = LocalContext.current
+    val pertemuan by viewModel.pertemuan.collectAsState(initial = emptyList())
     val error by viewModel.error.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
-        viewModel.fetchClasses()
-        viewModel.fetchPresensi()
+        viewModel.fetchPertemuan()
     }
 
     Box(
@@ -51,12 +53,12 @@ fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Header section
+            // Header Section
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 0.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Image(
@@ -64,7 +66,6 @@ fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
                     contentDescription = "Solutions Icon",
                     modifier = Modifier.size(144.dp, 30.dp)
                 )
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -85,14 +86,19 @@ fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            // Back button and title section
+            // Back Navigation
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(start = 10.dp)
+                    .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
+                    .clickable {
+                        val intent = Intent(context, ClassListActivity::class.java)
+                        context.startActivity(intent)
+                        (context as? ComponentActivity)?.finish()
+                    }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -115,7 +121,6 @@ fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
                     textAlign = TextAlign.Center
                 )
             } else {
-                // LazyColumn for dynamic data
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     item {
                         // Header row for the table
@@ -125,24 +130,23 @@ fun AbsenScreen(viewModel: ClassViewModel = viewModel()) {
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text("Kelas", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
-                            Text("Dosen", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                            Text("Kode Kelas", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+                            Text("Hari", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                             Text("Total Pertemuan", fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
                         }
                     }
 
-                    items(classes) { classItem ->
-                        val totalPertemuan = presensi.filter { it.presensi_id == classItem.kode_kelas.toInt() }.sumOf { it.pertemuan }
-
+                    items(pertemuan) { item ->
+                        val totalPertemuan = item.Presensis.firstOrNull()?.total_pertemuan ?: "0"
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(16.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(classItem.nama_kelas, modifier = Modifier.weight(1f))
-                            Text(classItem.nip, modifier = Modifier.weight(1f))
-                            Text(totalPertemuan.toString(), modifier = Modifier.weight(1f))
+                            Text(item.kode_kelas, modifier = Modifier.weight(1f))
+                            Text(item.hari, modifier = Modifier.weight(1f))
+                            Text(totalPertemuan, modifier = Modifier.weight(1f))
                         }
                     }
                 }

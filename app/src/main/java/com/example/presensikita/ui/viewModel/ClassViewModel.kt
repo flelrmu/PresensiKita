@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.presensikita.data.model.Class
 import com.example.presensikita.data.model.Lecturer
-import com.example.presensikita.data.model.Presensi
+import com.example.presensikita.data.model.PertemuanResponse
 import com.example.presensikita.data.repository.ClassRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,11 +16,11 @@ class ClassViewModel : ViewModel() {
     private val _classes = MutableStateFlow<List<Class>>(emptyList())
     val classes: StateFlow<List<Class>> get() = _classes
 
+    private val _pertemuan = MutableStateFlow<List<PertemuanResponse>>(emptyList())
+    val pertemuan: StateFlow<List<PertemuanResponse>> get() = _pertemuan
+
     private val _lecturers = MutableStateFlow<List<Lecturer>>(emptyList())
     val lecturers: StateFlow<List<Lecturer>> get() = _lecturers
-
-    private val _presensi = MutableStateFlow<List<Presensi>>(emptyList())
-    val presensi: StateFlow<List<Presensi>> get() = _presensi
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> get() = _error
@@ -50,13 +50,13 @@ class ClassViewModel : ViewModel() {
         }
     }
 
-    fun fetchPresensi() {
+    fun fetchPertemuan() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val response = repository.getPresensi()
+                val response = repository.getAllPertemuan()
                 if (response.isSuccessful) {
-                    _presensi.value = response.body() ?: emptyList()
+                    _pertemuan.value = response.body() ?: emptyList()
                     _error.value = null
                 } else {
                     _error.value = "Error: ${response.message()}"
@@ -68,6 +68,7 @@ class ClassViewModel : ViewModel() {
             }
         }
     }
+
 
     fun fetchLecturers() {
         viewModelScope.launch {
@@ -161,6 +162,7 @@ class ClassViewModel : ViewModel() {
             }
         }
     }
+
 
     fun setError(message: String?) {
         _error.value = message
