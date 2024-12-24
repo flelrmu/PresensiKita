@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
-import com.example.presensikita.configs.RetrofitClient
 import com.example.presensikita.data.model.LoginRequest
 import com.example.presensikita.ui.viewModel.LoginViewModel
 
@@ -41,9 +40,6 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Inisialisasi context untuk RetrofitClient
-        RetrofitClient.applicationContext = applicationContext
-
         setContent {
             LoginScreen { email, password ->
                 loginViewModel.login(LoginRequest(email, password))
@@ -53,23 +49,32 @@ class LoginActivity : ComponentActivity() {
         // Observe perubahan hasil login dari ViewModel
         loginViewModel.loginResponse.observe(this, Observer { response ->
             if (response != null) {
-                if (response.isSuccessful && response.body() != null) {
-                    val token = response.body()?.accessToken
-                    val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-                    sharedPreferences.edit().putString("accessToken", token).apply()
+                if (response.isSuccessful) {
+                    // Simpan token setelah login berhasil
+                    val accessToken = response.body()?.accessToken
+                    if (accessToken != null) {
+                        saveToken(accessToken)
+                    }
 
-                    // Login berhasil, pindah ke HomePageActivity
+                    // Pindah ke HomePageActivity
                     val intent = Intent(this, HomePageActivity::class.java)
                     startActivity(intent)
-                    finish()
+                    finish() // Tutup LoginActivity agar tidak bisa kembali
                 } else {
-                    val errorMessage = response.errorBody()?.string() ?: "Login gagal"
-                    Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Login gagal: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 Toast.makeText(this, "Terjadi kesalahan, silakan coba lagi.", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // Simpan token ke SharedPreferences
+    private fun saveToken(token: String) {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("accessToken", token)
+        editor.apply()
     }
 }
 
