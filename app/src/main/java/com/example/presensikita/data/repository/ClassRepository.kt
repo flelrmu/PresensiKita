@@ -3,8 +3,8 @@ package com.example.presensikita.data.repository
 import com.example.presensikita.configs.RetrofitClient
 import com.example.presensikita.data.api.ApiService
 import com.example.presensikita.data.model.Class
-import com.example.presensikita.data.model.Presensi
 import com.example.presensikita.data.model.Lecturer
+import com.example.presensikita.data.model.PertemuanResponse
 import retrofit2.Response
 
 class ClassRepository {
@@ -12,10 +12,6 @@ class ClassRepository {
 
     suspend fun getClasses(): Response<List<Class>> {
         return apiService.getClasses()
-    }
-
-    suspend fun getPresensi(): Response<List<Presensi>> {
-        return apiService.getPresensi()
     }
 
     suspend fun addClass(newClass: Class): Response<Class> {
@@ -49,4 +45,8 @@ class ClassRepository {
     }
 
     suspend fun getAllLecturers(): Response<List<Lecturer>> = apiService.getAllLecturers()
+
+    suspend fun getAllPertemuan(): Response<List<PertemuanResponse>> {
+        return apiService.getAllPertemuan()
+    }
 }
