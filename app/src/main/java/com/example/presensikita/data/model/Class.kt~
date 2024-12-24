@@ -13,8 +13,7 @@ data class Presensi(
     val pertemuan: Int,
     val jml_hadir: Int,
     val jml_alpha: Int,
-    val jml_izin: Int,
-    val jml_sakit: Int,
+    val semester: String,
 )
 
 data class Lecturer(

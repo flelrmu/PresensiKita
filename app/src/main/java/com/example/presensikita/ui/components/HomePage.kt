@@ -1,5 +1,9 @@
 package com.example.presensikita.ui.components
 
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,8 +24,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.presensikita.R
 
+class HomePageActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            HomePage()
+        }
+    }
+}
+
 @Composable
 fun HomePage(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -83,7 +99,10 @@ fun HomePage(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HomeButton(text = "Daftar Kelas", onClick = { /* Aksi tombol */ })
+            HomeButton(text = "Daftar Kelas", onClick = {
+                val intent = Intent(context, ClassListActivity::class.java)
+                context.startActivity(intent)
+            })
             Spacer(modifier = Modifier.height(12.dp))
             HomeButton(text = "Daftar Dosen", onClick = { /* Aksi tombol */ })
             Spacer(modifier = Modifier.height(12.dp))
