@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.data.model.Dosen
 import com.example.presensikita.ui.viewModel.DosenViewModel
 
 class EditLecturerActivity : ComponentActivity() {
@@ -160,14 +161,16 @@ fun EditLecturerScreen(
 
             Button(
                 onClick = {
-                    viewModel.updateDosen(
+                    val updatedDosen = Dosen(
                         nama = updatedNamaDosen,
                         email = updatedEmailDosen,
                         nip = updatedNipDosen
                     )
+                    viewModel.updateDosen(updatedDosen) // Memanggil fungsi dengan parameter yang sesuai
                     Toast.makeText(context, "Dosen berhasil diperbarui!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(context, LecturerListActivity::class.java)
                     context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,4 +181,8 @@ fun EditLecturerScreen(
             }
         }
     }
+}
+
+private fun DosenViewModel.updateDosen(updatedDosen: Unit) {
+
 }

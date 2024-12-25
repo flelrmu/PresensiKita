@@ -224,6 +224,10 @@ fun AddLecturerScreen(
     }
 }
 
+private fun DosenViewModel.addDosen(newDosen: Unit) {
+
+}
+
 fun Dosen(nip: String, nama: String, email: String) {
 
 }

@@ -42,10 +42,11 @@ class DosenViewModel : ViewModel() {
         }
     }
 
-    fun addDosen(newDosen: Unit) {
+    fun addDosen(newDosen: Dosen) { // Menggunakan tipe data Dosen
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                _isSuccess.value = false // Reset success state
                 val response = repository.createDosen(newDosen)
                 if (response.isSuccessful) {
                     _isSuccess.value = true
@@ -62,12 +63,14 @@ class DosenViewModel : ViewModel() {
         }
     }
 
-    fun updateDosen(nama: String, email: String, nip: String) {
+    fun updateDosen(updatedDosen: Dosen) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
-                val response = repository.updateDosen(nip, updatedDosen)
+                _isSuccess.value = false
+                val response = repository.updateDosen(updatedDosen.nip, updatedDosen)
                 if (response.isSuccessful) {
+                    _isSuccess.value = true
                     _error.value = null
                     fetchDosens()
                 } else {
@@ -81,12 +84,15 @@ class DosenViewModel : ViewModel() {
         }
     }
 
+
     fun deleteDosen(nip: String) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                _isSuccess.value = false // Reset success state
                 val response = repository.deleteDosen(nip)
                 if (response.isSuccessful) {
+                    _isSuccess.value = true
                     _error.value = null
                     fetchDosens() // Refresh daftar dosen
                 } else {
@@ -103,4 +109,5 @@ class DosenViewModel : ViewModel() {
     fun setError(message: String?) {
         _error.value = message
     }
+
 }
