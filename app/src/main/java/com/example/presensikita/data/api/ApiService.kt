@@ -8,6 +8,8 @@ import com.example.presensikita.data.model.Class
 import com.example.presensikita.data.model.Departemen
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import com.example.presensikita.data.model.Lecturer
+import com.example.presensikita.data.model.PertemuanResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -51,6 +53,18 @@ interface ApiService {
     @POST("classes")
     suspend fun addClass(@Body newClass: Class): Response<Class>
 
-    @DELETE("classes/{id}")
-    suspend fun deleteClass(@Path("id") id: Int): Response<Unit>
+    @DELETE("classes/{kode_kelas}")
+    suspend fun deleteClass(@Path("kode_kelas") kode_kelas: String): Response<Unit>
+
+    @PUT("classes/{kode_kelas}")
+    suspend fun updateClass(
+        @Path("kode_kelas") kodeKelas: String,
+        @Body updatedClass: Class
+    ): Response<Class>
+
+    @GET("lecturers")
+    suspend fun getAllLecturers(): Response<List<Lecturer>>
+
+    @GET("pertemuan")
+    suspend fun getAllPertemuan(): Response<List<PertemuanResponse>>
 }

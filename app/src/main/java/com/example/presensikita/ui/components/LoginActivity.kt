@@ -1,6 +1,7 @@
 package com.example.presensikita.ui.components
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
+import com.example.presensikita.configs.RetrofitClient
 import com.example.presensikita.data.model.LoginRequest
 import com.example.presensikita.ui.viewModel.LoginViewModel
 
@@ -40,8 +42,11 @@ class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val token = sharedPreferences.getString("access_token", null)
+
+        // Inisialisasi context untuk RetrofitClient
+        RetrofitClient.applicationContext = applicationContext
 
         if (!token.isNullOrEmpty()) {
             // Token masih ada, arahkan ke halaman utama
@@ -63,7 +68,7 @@ class LoginActivity : ComponentActivity() {
                     var namaAdmin: String = ""
                     response.body()?.let { loginResponse ->
                         // Simpan token dan refresh token
-                        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                         with(sharedPreferences.edit()) {
                             putString("access_token", loginResponse.accessToken)
                             putString("refresh_token", loginResponse.refreshToken)
