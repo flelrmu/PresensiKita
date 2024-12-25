@@ -38,90 +38,16 @@ import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.presensikita.R
-import com.example.presensikita.data.UserProfile
-import com.example.presensikita.finish
 import com.example.presensikita.ui.viewModel.EditProfileViewModel
 
 class EditProfileActivity : ComponentActivity() {
     private val viewModel: EditProfileViewModel by viewModels()
 
-//    private val PERMISSION_REQUEST_CODE = 123
-
-//    private fun checkAndRequestPermissions() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            // Untuk Android 13 ke atas
-//            when {
-//                ContextCompat.checkSelfPermission(
-//                    this,
-//                    Manifest.permission.READ_MEDIA_IMAGES
-//                ) == PackageManager.PERMISSION_GRANTED -> {
-//                    // Permission sudah diberikan
-//                }
-//                else -> {
-//                    // Minta permission
-//                    ActivityCompat.requestPermissions(
-//                        this,
-//                        arrayOf(Manifest.permission.READ_MEDIA_IMAGES),
-//                        PERMISSION_REQUEST_CODE
-//                    )
-//                }
-//            }
-//        } else {
-//            // Untuk Android 12 ke bawah
-//            when {
-//                ContextCompat.checkSelfPermission(
-//                    this,
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-//                ) == PackageManager.PERMISSION_GRANTED -> {
-//                    // Permission sudah diberikan
-//                }
-//                else -> {
-//                    // Minta permission
-//                    ActivityCompat.requestPermissions(
-//                        this,
-//                        arrayOf(
-//                            Manifest.permission.READ_EXTERNAL_STORAGE,
-//                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                        ),
-//                        PERMISSION_REQUEST_CODE
-//                    )
-//                }
-//            }
-//        }
-//    }
-
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions as Array<String>, grantResults)
-//        when (requestCode) {
-//            PERMISSION_REQUEST_CODE -> {
-//                if (grantResults.isNotEmpty() &&
-//                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // Permission diberikan
-//                    Toast.makeText(
-//                        this,
-//                        "Permission diberikan",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                } else {
-//                    // Permission ditolak
-//                    Toast.makeText(
-//                        this,
-//                        "Permission diperlukan untuk mengakses foto",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        }
-//    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Get user data from SharedPreferences
-        val sharedPreferences = getSharedPreferences("user_session", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val token = sharedPreferences.getString("access_token", "") ?: ""
         val currentName = sharedPreferences.getString("user_name", "") ?: ""
         val currentEmail = sharedPreferences.getString("user_email", "") ?: ""
@@ -178,8 +104,6 @@ class EditProfileActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
-//    onSaveClick: (UserProfile) -> Unit,
-//    initialProfile: UserProfile = UserProfile()
     viewModel: EditProfileViewModel,
     token: String,
     initialName: String,
@@ -187,23 +111,6 @@ fun EditProfileScreen(
     initialDepartemenId: Int,
     currentPhotoUrl: String?
 ) {
-//    var profile by remember { mutableStateOf(initialProfile) }
-//    val scrollState = rememberScrollState()
-//
-//    val context = LocalContext.current
-//
-//    // State untuk validasi email
-//    var isEmailValid by remember { mutableStateOf(true) }
-//
-//    var profileImageUri by remember { mutableStateOf<Uri?>(null) }
-//
-//    // Launcher untuk membuka galeri
-//    val galleryLauncher = rememberLauncherForActivityResult(
-//        contract = ActivityResultContracts.GetContent(),
-//        onResult = { uri ->
-//            if (uri != null) profileImageUri = uri
-//        }
-//    )
 
     var name by remember { mutableStateOf(initialName) }
     var email by remember { mutableStateOf(initialEmail) }
@@ -388,29 +295,6 @@ fun EditProfileScreen(
                 }
             }
 
-//            OutlinedTextField(
-//                value = profile.departemen,
-//                onValueChange = { profile = profile.copy(departemen = it) },
-//                label = { Text("Departemen") },
-//                modifier = Modifier.fillMaxWidth(),
-//                singleLine = true,
-//                colors = TextFieldDefaults.outlinedTextFieldColors(
-//                    focusedBorderColor = Color.Black,
-//                    unfocusedBorderColor = Color.Black
-//                )
-//            )
-
-//            OutlinedTextField(
-//                value = profile.fakultas,
-//                onValueChange = { profile = profile.copy(fakultas = it) },
-//                label = { Text("Fakultas") },
-//                modifier = Modifier.fillMaxWidth(),
-//                singleLine = true,
-//                colors = TextFieldDefaults.outlinedTextFieldColors(
-//                    focusedBorderColor = Color.Black,
-//                    unfocusedBorderColor = Color.Black
-//                )
-//            )
         }
 
         Spacer(modifier = Modifier.weight(1f))

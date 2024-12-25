@@ -17,7 +17,7 @@ class ChangePasswordViewModel(private val context: Context) : ViewModel() {
     fun changePassword(currentPassword: String, newPassword: String) {
         viewModelScope.launch {
             try {
-                val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                 val token = sharedPreferences.getString("access_token", "") ?: ""
 
                 val request = ChangePasswordRequest(currentPassword, newPassword)

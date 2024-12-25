@@ -112,26 +112,6 @@ class EditProfileViewModel : ViewModel() {
                     photoMultipart = MultipartBody.Part.createFormData("foto_profile", tempFile.name, requestFile)
                 }
 
-//                imageUri?.let { uri ->
-//                    // Create a temporary file to store the compressed image
-//                    val tempFile = File(context.cacheDir, "temp_profile_image.jpg")
-//
-//                    // Read the input stream from URI and compress the image
-//                    context.contentResolver.openInputStream(uri)?.use { inputStream ->
-//                        // Decode the image to bitmap
-//                        val bitmap = BitmapFactory.decodeStream(inputStream)
-//
-//                        // Compress and save to temporary file
-//                        FileOutputStream(tempFile).use { outputStream ->
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
-//                        }
-//                    }
-//
-//                    // Create MultipartBody.Part from the compressed file
-//                    val requestFile = tempFile.asRequestBody("image/*".toMediaTypeOrNull())
-//                    photoMultipart = MultipartBody.Part.createFormData("foto_profile", tempFile.name, requestFile)
-//                }
-
                 // Make API call
                 val response = apiService.editProfile(
                     "Bearer $token",
@@ -141,15 +121,9 @@ class EditProfileViewModel : ViewModel() {
                     photoMultipart
                 )
 
-//                if (response.isSuccessful) {
-//                    _updateResult.value = Result.success(response.body()!!)
-//                } else {
-//                    _updateResult.value = Result.failure(Exception("Update failed: ${response.code()}"))
-//                }
-
                 if (response.isSuccessful) {
                     // Update SharedPreferences dengan data baru
-                    val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+                    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                     with(sharedPreferences.edit()) {
                         putString("user_name", nama)
                         putString("user_email", email)

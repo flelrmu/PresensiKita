@@ -48,22 +48,37 @@ class LoginActivity : ComponentActivity() {
         // Inisialisasi context untuk RetrofitClient
         RetrofitClient.applicationContext = applicationContext
 
-        if (!token.isNullOrEmpty()) {
-            // Token masih ada, arahkan ke halaman utama
-            startActivity(Intent(this, HomePageActivity::class.java))
-            finish()
-        } else {
-            setContent {
-                LoginScreen { email, password ->
+//        if (!token.isNullOrEmpty()) {
+//            // Token masih ada, arahkan ke halaman utama
+//            startActivity(Intent(this, HomePageActivity::class.java))
+//            finish()
+//        } else {
+//            setContent {
+//                LoginScreen { email, password ->
+//                    loginViewModel.login(LoginRequest(email, password))
+//                }
+//            }
+//        }
+
+        setContent {
+            LoginScreen { email, password ->
                     loginViewModel.login(LoginRequest(email, password))
-                }
             }
         }
 
         // Observe perubahan hasil login dari ViewModel
         loginViewModel.loginResponse.observe(this, Observer { response ->
             if (response != null) {
-                if (response.isSuccessful) {
+                if (response.isSuccessful && response.body() != null) {
+
+                    // Simpan token setelah login berhasil
+//                    val accessToken = response.body()?.accessToken
+//                    if (accessToken != null) {
+//                        saveToken(accessToken)
+//                    }
+
+//                    val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+//                    sharedPreferences.edit().putString("access_token", token).apply()
 
                     var namaAdmin: String = ""
                     response.body()?.let { loginResponse ->
@@ -81,6 +96,8 @@ class LoginActivity : ComponentActivity() {
                             putString("user_departemen", loginResponse.admin.nama_departemen ?: "")
                             putString("user_fakultas", loginResponse.admin.fakultas ?: "")
                             putString("user_foto_profile", loginResponse.admin.foto_profile)
+                            putString("local_profile_image", loginResponse.admin.foto_profile)
+                            putString("server_profile_image", loginResponse.admin.foto_profile)
                             apply()
                         }
                     }
@@ -98,6 +115,15 @@ class LoginActivity : ComponentActivity() {
             }
         })
     }
+
+    // Simpan token ke SharedPreferences
+//    private fun saveToken(token: String) {
+//        val sharedPreferences: SharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//        editor.putString("access_token ", token)
+//        editor.apply()
+//    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

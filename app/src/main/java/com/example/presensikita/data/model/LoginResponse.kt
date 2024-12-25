@@ -50,6 +50,8 @@ data class UserData(
     val email: String,
     val nama: String,
     val foto_profile: String? = null,
+    val local_profile_image: String? = null,
+    val server_profile_image: String? = null,
     val departemen_id: Int,
     val nama_departemen: String,
     val fakultas: String

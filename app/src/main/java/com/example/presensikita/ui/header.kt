@@ -32,7 +32,7 @@ fun header() {
     // Mendapatkan konteks saat ini
     val context = LocalContext.current
 
-    val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
     // Cek gambar lokal terlebih dahulu
     val localImagePath = sharedPreferences.getString("local_profile_image", null)
@@ -45,11 +45,6 @@ fun header() {
             .padding(horizontal = 0.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.solutions),
-//            contentDescription = "Solutions Icon",
-//            modifier = Modifier.size(144.dp, 30.dp)
-//        )
 
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -74,15 +69,7 @@ fun header() {
                 modifier = Modifier.size(43.dp, 31.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
-//            Image(
-//                painter = painterResource(id = R.drawable.profile),
-//                contentDescription = "Profile Icon",
-//                modifier = Modifier
-//                    .size(43.dp, 31.dp)
-//                    .clickable {
-//                        context.startActivity(Intent(context, ProfilePageActivity::class.java))
-//                    }
-//            )
+
             // Profile Image
             if (localImagePath != null) {
                 // Gunakan gambar lokal

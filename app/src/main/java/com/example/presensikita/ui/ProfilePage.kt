@@ -38,7 +38,7 @@ class ProfilePageActivity : ComponentActivity() {
         setContent {
 
             val context = LocalContext.current
-            val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+            val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
             // Force refresh user data from SharedPreferences
             val userData = UserData(
@@ -48,7 +48,9 @@ class ProfilePageActivity : ComponentActivity() {
                 departemen_id = sharedPreferences.getInt("user_departemen_id", 0),
                 nama_departemen = sharedPreferences.getString("user_departemen", "") ?: "",
                 fakultas = sharedPreferences.getString("user_fakultas", "") ?: "",
-                foto_profile = sharedPreferences.getString("user_foto_profile", null)
+                foto_profile = sharedPreferences.getString("local_profile_image", null),
+                local_profile_image = sharedPreferences.getString("local_profile_image", null),
+                server_profile_image = sharedPreferences.getString("server_profile_image", null)
             )
 
             ProfileScreen(
@@ -68,7 +70,7 @@ fun ProfileScreen(
 ) {
     // Mendapatkan konteks saat ini
     val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
     val scrollState = rememberScrollState()
 

@@ -115,20 +115,6 @@ fun HomePage(modifier: Modifier = Modifier) {
                     context.startActivity(Intent(context, DaftarJadwalKuliahActivity::class.java))
                 })
             }
-        // Tombol-tombol utama
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            HomeButton(text = "Daftar Kelas", onClick = {
-                val intent = Intent(context, ClassListActivity::class.java)
-                context.startActivity(intent)
-            })
-            Spacer(modifier = Modifier.height(12.dp))
-            HomeButton(text = "Daftar Dosen", onClick = { /* Aksi tombol */ })
-            Spacer(modifier = Modifier.height(12.dp))
-            HomeButton(text = "Jadwal Perkuliahan", onClick = { /* Aksi tombol */ })
-        }
 
             // Spacer dinamis untuk memastikan tombol dan logo tetap di tengah
             Spacer(modifier = Modifier.weight(1f))

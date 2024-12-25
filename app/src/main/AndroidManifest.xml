@@ -98,6 +98,11 @@
             android:theme="@style/Theme.PresensiKita" />
 
         <activity
+            android:name=".ui.jadwal_kuliah.EditJadwalActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PresensiKita" />
+
+        <activity
             android:name=".ui.components.HomePageActivity"
             android:exported="true"
             android:theme="@style/Theme.PresensiKita" />

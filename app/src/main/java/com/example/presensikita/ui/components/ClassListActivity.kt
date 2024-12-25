@@ -10,7 +10,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,6 +53,8 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
     val classes by viewModel.classes.collectAsState(initial = emptyList())
     val error by viewModel.error.collectAsState(initial = null)
 
+    val scrollState = rememberScrollState()
+
     LaunchedEffect(Unit) {
         viewModel.fetchClasses()
     }
@@ -58,11 +62,14 @@ fun ClassListScreen(viewModel: ClassViewModel = viewModel()) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+//            .verticalScroll(scrollState)
             .padding(16.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+
         ) {
 //            // Header
 //            Row(

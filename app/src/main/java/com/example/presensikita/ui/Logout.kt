@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 fun logoutUser(context: Context) {
     // Ambil token dari SharedPreferences
-    val sharedPreferences = context.getSharedPreferences("user_session", Context.MODE_PRIVATE)
+    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val refreshToken = sharedPreferences.getString("refresh_token", "")
 
     if (refreshToken.isNullOrEmpty()) {

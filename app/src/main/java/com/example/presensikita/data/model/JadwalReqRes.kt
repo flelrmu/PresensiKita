@@ -67,3 +67,55 @@ data class Kela(
 	@field:SerializedName("semester")
 	val semester: String? = null
 )
+
+// Buat data class untuk request dan response
+data class UpdateJadwalRequest(
+	@SerializedName("ruangan_id")
+	val ruangan_id: Int,
+
+	@SerializedName("hari")
+	val hari: String,
+
+	@SerializedName("jam_mulai")
+	val jam_mulai: String
+)
+
+data class UpdateJadwalResponse(
+	@SerializedName("message")
+	val message: String,
+
+	@SerializedName("data")
+	val data: JadwalItem
+)
+
+// RuanganResponse.kt
+data class RuanganResponse(
+	@SerializedName("message")
+	val message: String,
+
+	@SerializedName("data")
+	val data: List<RuanganItem>
+)
+
+data class RuanganItem(
+	@SerializedName("ruang_id")
+	val ruang_id: Int,
+
+	@SerializedName("nama_ruangan")
+	val nama_ruangan: String,
+
+
+	@SerializedName("kapasitas")
+	val kapasitas: Int
+)
+
+data class TambahJadwalRequest(
+	@SerializedName("kode_kelas")
+	val kodeKelas: String,
+	@SerializedName("ruangan_id")
+	val ruanganId: Int,
+	@SerializedName("hari")
+	val hari: String,
+	@SerializedName("jam_mulai")
+	val jamMulai: String
+)

@@ -20,9 +20,6 @@ object RetrofitClient {
         .addInterceptor(HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         })
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
         .addInterceptor { chain ->
             // Ambil token dari SharedPreferences
             val sharedPreferences = applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
@@ -59,4 +56,5 @@ object RetrofitClient {
     fun getApiService(): ApiService = retrofit.create(ApiService::class.java)
 
     val jadwalService: JadwalService = retrofit.create(JadwalService::class.java)
+
 }
