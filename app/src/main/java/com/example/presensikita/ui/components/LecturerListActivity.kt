@@ -11,10 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,8 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
 import com.example.presensikita.ui.header
+import com.example.presensikita.ui.viewModel.DosenViewModel
 
 class LecturerListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,17 +41,19 @@ class LecturerListActivity : ComponentActivity() {
 }
 
 @Composable
-fun LecturerListScreen() {
+fun LecturerListScreen(viewModel: DosenViewModel = viewModel()) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     var selectedLecturer by remember { mutableStateOf("") }
     var showSnackbar by remember { mutableStateOf(false) }
     var snackbarMessage by remember { mutableStateOf("") }
 
-    val lecturers = listOf(
-        Lecturer(name = "Affiyardi Dwi Kartika, MT", email = "Dwi@gmail.com", nip = "12121212125452"),
-        Lecturer(name = "Hasdi Putra, MT", email = "Hasdi@gmail.com", nip = "385763976749")
-    )
+    val lecturers by viewModel.dosens.collectAsState(initial = emptyList())
+    val error by viewModel.error.collectAsState(initial = null)
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchDosens()
+    }
 
     Box(
         modifier = Modifier
@@ -63,6 +64,7 @@ fun LecturerListScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
+
             header()
 
             Spacer(modifier = Modifier.height(50.dp))
@@ -74,6 +76,11 @@ fun LecturerListScreen() {
                     .align(Alignment.Start)
                     .padding(start = 0.dp)
                     .size(33.dp, 31.dp)
+                    .clickable {
+                        val intent = Intent(context, HomePageActivity::class.java)
+                        context.startActivity(intent)
+                        (context as? ComponentActivity)?.finish()
+                    }
             )
 
             Spacer(modifier = Modifier.height(30.dp))
@@ -82,7 +89,8 @@ fun LecturerListScreen() {
                 text = "Daftar Dosen",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF2A2A2A)
+                color = Color(0xFF2A2A2A),
+                modifier = Modifier.padding(top = 20.dp, bottom = 10.dp)
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -115,53 +123,72 @@ fun LecturerListScreen() {
             Spacer(modifier = Modifier.height(30.dp))
 
             // LazyColumn for Lecturer List
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                items(lecturers) { lecturer ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = lecturer.name,
-                                fontSize = 18.sp,
-                                fontFamily = FontFamily.Serif,
-                                color = Color(0xFF2A2A2A)
-                            )
-                            Text(
-                                text = lecturer.email,
-                                fontSize = 14.sp,
-                                color = Color(0xFF6C6C6C)
-                            )
-                            Text(
-                                text = lecturer.nip,
-                                fontSize = 14.sp,
-                                color = Color(0xFF6C6C6C)
-                            )
-                        }
-
-                        Image(
-                            painter = painterResource(R.drawable.edit),
-                            contentDescription = "Edit Icon",
-                            modifier = Modifier.size(23.dp, 20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(25.dp))
-                        Image(
-                            painter = painterResource(R.drawable.trash),
-                            contentDescription = "Trash Icon",
+            if (error != null) {
+                Text(
+                    text = "Terjadi kesalahan: $error\nSilakan coba lagi nanti.",
+                    color = Color.Red,
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    items(lecturers) { lecturer ->
+                        Row(
                             modifier = Modifier
-                                .size(20.dp)
-                                .clickable {
-                                    selectedLecturer = lecturer.name
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${lecturer.nama}/${lecturer.nip}",
+                                fontSize = 15.sp,
+                                fontFamily = FontFamily.Serif,
+                                color = Color(0xFF2A2A2A),
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Spacer(modifier = Modifier.width(8.dp))
+
+                            IconButton(
+                                onClick = {
+                                    val intent = Intent(context, EditLecturerActivity::class.java).apply {
+                                        putExtra("NIP", lecturer.nip)
+                                        putExtra("NAMA_DOSEN", lecturer.nama)
+                                        putExtra("EMAIL", lecturer.email)
+                                        putExtra("TELEPON", lecturer.telepon)
+                                    }
+                                    context.startActivity(intent)
+                                }
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.edit),
+                                    contentDescription = "Edit",
+                                    modifier = Modifier
+                                        .size(23.dp, 20.dp),
+                                    tint = Color(0xFF00A844)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(25.dp))
+
+                            IconButton(
+                                onClick = {
+                                    selectedLecturer = lecturer.nip // Ambil nip saja
                                     showDialog = true
                                 }
-                        )
+                            ) {
+                                Icon(
+                                    painter = painterResource(R.drawable.trash),
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.size(20.dp),
+                                    tint = Color.Red
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -173,7 +200,7 @@ fun LecturerListScreen() {
                     Box(
                         modifier = Modifier
                             .width(300.dp)
-                            .height(200.dp)
+                            .height(170.dp)
                             .clip(RoundedCornerShape(16.dp))
                             .background(Color.White)
                             .padding(16.dp)
@@ -196,13 +223,20 @@ fun LecturerListScreen() {
                                 Button(
                                     onClick = {
                                         showDialog = false
-                                        snackbarMessage = "$selectedLecturer berhasil dihapus!"
-                                        showSnackbar = true
+                                        if (selectedLecturer.isNotEmpty()) {
+                                            viewModel.deleteDosen(selectedLecturer)
+                                            snackbarMessage = "Dosen berhasil dihapus."
+                                            showSnackbar = true
+                                        } else {
+                                            snackbarMessage = "NIP tidak valid."
+                                            showSnackbar = true
+                                        }
                                     },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
                                 ) {
                                     Text(text = "Continue", color = Color.White)
                                 }
+
                                 Button(
                                     onClick = { showDialog = false },
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
@@ -218,13 +252,16 @@ fun LecturerListScreen() {
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = { /* Handle Download */ },
+                onClick = {
+                    val intent = Intent(context, AbsenActivity::class.java)
+                    context.startActivity(intent)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00A844))
             ) {
-                Text(text = "Download Absensi", color = Color.White)
+                Text(text = "Laporan Kehadiran", color = Color.White)
             }
         }
 
@@ -251,9 +288,3 @@ fun LecturerListScreen() {
 fun PreviewLecturerListScreen() {
     LecturerListScreen()
 }
-
-data class Lecturer(
-    val name: String,
-    val email: String,
-    val nip: String
-)

@@ -19,7 +19,7 @@ class DosenRepository {
     }
 
     // Menambahkan dosen baru
-    suspend fun createDosen(dosen: Dosen): Response<Dosen> {
+    suspend fun createDosen(dosen: Unit): Response<Dosen> {
         return apiService.createDosen(dosen)
     }
 

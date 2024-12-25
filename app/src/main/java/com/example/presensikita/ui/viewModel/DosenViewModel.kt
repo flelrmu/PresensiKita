@@ -42,7 +42,7 @@ class DosenViewModel : ViewModel() {
         }
     }
 
-    fun addDosen(newDosen: Dosen) {
+    fun addDosen(newDosen: Unit) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
@@ -62,7 +62,7 @@ class DosenViewModel : ViewModel() {
         }
     }
 
-    fun updateDosen(nip: String, updatedDosen: Dosen) {
+    fun updateDosen(nama: String, email: String, nip: String) {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
