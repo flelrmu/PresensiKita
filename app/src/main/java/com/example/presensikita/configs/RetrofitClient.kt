@@ -10,10 +10,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-//    private const val BASE_URL = "https://api-presensi-production.up.railway.app/api/"
+    private const val BASE_URL = "https://api-presensi-production.up.railway.app/api/"
 
-    private const val BASE_URL = "https://8qgllgnr-5000.asse.devtunnels.ms/api/"
+//    private const val BASE_URL = "https://8qgllgnr-5000.asse.devtunnels.ms/api/"
 //    private const val BASE_URL = "http://10.0.2.2:5000/api/"
+//    private const val BASE_URL = "http://192.168.1.5:5000/api/"
     lateinit var applicationContext: Context // Tambahkan context dari aplikasi
 
     private val client = OkHttpClient.Builder()

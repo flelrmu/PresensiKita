@@ -1,9 +1,13 @@
 package com.example.presensikita.ui.components
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -15,24 +19,41 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.presensikita.R
+import com.example.presensikita.data.model.Dosen
+import com.example.presensikita.ui.viewModel.DosenViewModel
 
 class EditLecturerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            EditLecturerScreen()
+            val namaDosen = intent.getStringExtra("NAMA_DOSEN") ?: ""
+            val emailDosen = intent.getStringExtra("EMAIL_DOSEN") ?: ""
+            val nipDosen = intent.getStringExtra("NIP_DOSEN") ?: ""
+
+            EditLecturerScreen(
+                namaDosen = namaDosen,
+                emailDosen = emailDosen,
+                nipDosen = nipDosen,
+                context = this
+            )
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditLecturerScreen() {
-    var nama by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var nip by remember { mutableStateOf("") }
+fun EditLecturerScreen(
+    namaDosen: String,
+    emailDosen: String,
+    nipDosen: String,
+    context: Context,
+    viewModel: DosenViewModel = viewModel()
+) {
+    var updatedNamaDosen by remember { mutableStateOf(namaDosen) }
+    var updatedEmailDosen by remember { mutableStateOf(emailDosen) }
+    var updatedNipDosen by remember { mutableStateOf(nipDosen) }
 
     Box(
         modifier = Modifier
@@ -43,7 +64,7 @@ fun EditLecturerScreen() {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            // Header dengan logo dan ikon notifikasi/profil
+            // Header
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -56,42 +77,31 @@ fun EditLecturerScreen() {
                     contentDescription = "Solutions Icon",
                     modifier = Modifier.size(144.dp, 30.dp)
                 )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.notification),
-                        contentDescription = "Notification Icon",
-                        modifier = Modifier
-                            .size(43.dp, 31.dp)
-                            .padding(end = 8.dp)
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.profile),
-                        contentDescription = "Profile Icon",
-                        modifier = Modifier.size(43.dp, 31.dp)
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.profile),
+                    contentDescription = "Profile Icon",
+                    modifier = Modifier.size(43.dp, 31.dp)
+                )
             }
 
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(50.dp))
 
-            // Tombol kembali
             Image(
                 painter = painterResource(id = R.drawable.leftchevron),
                 contentDescription = "Chevron Icon",
                 modifier = Modifier
                     .align(Alignment.Start)
-                    .padding(start = 10.dp)
-                    .size(33.dp, 31.dp)
+                    .clickable {
+                        val intent = Intent(context, LecturerListActivity::class.java)
+                        context.startActivity(intent)
+                        (context as? ComponentActivity)?.finish()
+                    }
             )
 
-            Spacer(modifier = Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
-            // Judul halaman
             Text(
-                text = "Perbarui Data Dosen",
+                text = "Edit Dosen",
                 fontSize = 34.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF2A2A2A)
@@ -100,64 +110,68 @@ fun EditLecturerScreen() {
             Spacer(modifier = Modifier.height(30.dp))
 
             // Input Nama
-            Column(modifier = Modifier.padding(horizontal = 52.dp)) {
-                Text(text = "Nama", fontSize = 17.sp, color = Color.Black)
-                OutlinedTextField(
-                    value = nama,
-                    onValueChange = { nama = it },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
-                    )
+            OutlinedTextField(
+                value = updatedNamaDosen,
+                onValueChange = { updatedNamaDosen = it },
+                label = { Text(text = "Nama Dosen") },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
                 )
-            }
+            )
 
             // Input Email
-            Column(modifier = Modifier.padding(horizontal = 52.dp)) {
-                Text(text = "Email", fontSize = 17.sp, color = Color.Black)
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
-                    )
+            OutlinedTextField(
+                value = updatedEmailDosen,
+                onValueChange = { updatedEmailDosen = it },
+                label = { Text(text = "Email") },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
                 )
-            }
+            )
 
             // Input NIP
-            Column(modifier = Modifier.padding(horizontal = 52.dp)) {
-                Text(text = "NIP", fontSize = 17.sp, color = Color.Black)
-                OutlinedTextField(
-                    value = nip,
-                    onValueChange = { nip = it },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color.Black,
-                        unfocusedBorderColor = Color.Black
-                    )
+            OutlinedTextField(
+                value = updatedNipDosen,
+                onValueChange = { updatedNipDosen = it },
+                label = { Text(text = "NIP") },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 52.dp, vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
                 )
-            }
+            )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Tombol Simpan
             Button(
-                onClick = { /* Handle simpan dosen */ },
+                onClick = {
+                    val updatedDosen = Dosen(
+                        nama = updatedNamaDosen,
+                        email = updatedEmailDosen,
+                        nip = updatedNipDosen
+                    )
+                    viewModel.updateDosen(updatedDosen) // Memanggil fungsi dengan parameter yang sesuai
+                    Toast.makeText(context, "Dosen berhasil diperbarui!", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(context, LecturerListActivity::class.java)
+                    context.startActivity(intent)
+                    (context as? ComponentActivity)?.finish()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 32.dp, vertical = 16.dp),
@@ -169,8 +183,6 @@ fun EditLecturerScreen() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EditLecturerScreenPreview() {
-    EditLecturerScreen()
+private fun DosenViewModel.updateDosen(updatedDosen: Unit) {
+
 }

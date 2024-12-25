@@ -39,13 +39,10 @@ import com.example.presensikita.ui.jadwal_kuliah.DaftarJadwalKuliahActivity
 import kotlinx.coroutines.delay
 
 class HomePageActivity : ComponentActivity() {
-//    private val HomePageViewModel: HomePageViewModel by viewModel()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("HomePage", "HomePage Activity Launched")
         setContent {
-//            HomePagePreview()
             HomePage()
         }
     }
@@ -68,7 +65,7 @@ fun HomePage(modifier: Modifier = Modifier) {
     Box(
         Modifier
             .fillMaxSize()
-            .pullRefresh(pullRefreshState)
+//            .pullRefresh(pullRefreshState)
     ) {
         Column(
             modifier = modifier
@@ -95,8 +92,8 @@ fun HomePage(modifier: Modifier = Modifier) {
                 contentScale = ContentScale.Fit
             )
 
-            // Spacer tambahan antara logo dan tombol
-            Spacer(modifier = Modifier.height(24.dp)) // Tambahkan Spacer untuk memberi jarak lebih
+        // Spacer tambahan antara logo dan tombol
+        Spacer(modifier = Modifier.height(24.dp)) // Tambahkan Spacer untuk memberi jarak lebih
 
             Log.d("HomePage", "Buttons are being composed")
             // Tombol-tombol utama
